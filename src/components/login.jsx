@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import './login.css';
 import LogoSvg from "./logosvg";
 
-
 const LoginPage = () => {
     const navigate = useNavigate();
     const [isSignUpActive, setIsSignUpActive] = useState(false);
@@ -30,10 +29,8 @@ const LoginPage = () => {
                         <GoogleLogin
                             onSuccess={tokenResponse => {
                                 console.log(tokenResponse);
-                                const token = tokenResponse?.credential;
-                                
-                                if(token) {
-                                    navigate('/dashboard',{state: { token: token }});
+                                if(tokenResponse) {
+                                    navigate('/dashboard',{state: { token: tokenResponse }});
                                 }
                             }}
                             onError={() => {
