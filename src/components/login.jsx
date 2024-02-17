@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { GoogleLogin } from '@react-oauth/google';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import './login.css';
 import LogoSvg from "./logosvg";
 
 const LoginPage = () => {
-    const history = useHistory();
+    const history = useNavigate();
     const [isSignUpActive, setIsSignUpActive] = useState(false);
 
     const handleSignUpClick = () => {
