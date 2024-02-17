@@ -4,11 +4,11 @@ import { useLocation } from 'react-router-dom';
 const Dashboard = () => {
     const location = useLocation();
     const { state } = location;
+    const access_token = location.credential;
 
     return (
         <>
-            {console.log(state.tokenResponse)}
-        <h1>{state.tokenResponse}</h1>
+        <h1>{access_token}</h1>
             
         </>
     )
