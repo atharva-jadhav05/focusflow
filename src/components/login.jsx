@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import './login.css';
 import LogoSvg from "./logosvg";
 
+
 const LoginPage = () => {
     const navigate = useNavigate();
     const [isSignUpActive, setIsSignUpActive] = useState(false);
