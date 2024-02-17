@@ -1,11 +1,11 @@
 import React from "react";
 
 const Dashboard = ({location}) => {
-    const token = location && location.state ? location.state.token : null;
+    const token = location && location.state ? location.state : null;
 
     return (
         <>
-        <h1>{token}</h1>
+        <h1>{location}</h1>
         </>
     )
 }
