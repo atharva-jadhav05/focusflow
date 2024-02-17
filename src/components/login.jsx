@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { GoogleLogin } from '@react-oauth/google';
+import { useHistory } from 'react-router-dom';
 
 import './login.css';
 import LogoSvg from "./logosvg";
 
 const LoginPage = () => {
+    const history = useHistory();
     const [isSignUpActive, setIsSignUpActive] = useState(false);
 
     const handleSignUpClick = () => {
@@ -25,8 +27,16 @@ const LoginPage = () => {
                         <br></br><br></br><br></br>
                         <div className="login-button">
                         <GoogleLogin
-                            onSuccess={credentialResponse => {
-                                console.log(credentialResponse);
+                            onSuccess={tokenResponse => {
+                                console.log(tokenResponse);
+                                const token = tokenResponse?.credential;
+                                
+                                if(token) {
+                                    history.push({
+                                        pathname: '/dashboard',
+                                        state: { token: token }
+                                      });
+                                }
                             }}
                             onError={() => {
                                 console.log('Login Failed');
