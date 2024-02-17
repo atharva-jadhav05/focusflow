@@ -7,6 +7,7 @@ const Dashboard = () => {
 
     return (
         <>
+            {console.log(state.tokenResponse)}
         <h1>{state.tokenResponse}</h1>
             
         </>
