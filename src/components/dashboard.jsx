@@ -1,8 +1,7 @@
 import React from "react";
 
-const Dashboard = (props) => {
-    const { location } = props;
-    const token = location.state?.token;
+const Dashboard = ({location}) => {
+    const token = location && location.state ? location.state.token : null;
 
     return (
         <>
