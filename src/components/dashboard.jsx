@@ -8,7 +8,8 @@ const Dashboard = () => {
 
     return (
         <>
-        <h1>{access_token}</h1>
+        {console.log(access_token)}
+        <h1>Hello {access_token}</h1>
             
         </>
     )
