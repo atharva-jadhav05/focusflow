@@ -6,7 +6,7 @@ import './login.css';
 import LogoSvg from "./logosvg";
 
 const LoginPage = () => {
-    const history = useNavigate();
+    const navigate = useNavigate();
     const [isSignUpActive, setIsSignUpActive] = useState(false);
 
     const handleSignUpClick = () => {
@@ -32,10 +32,7 @@ const LoginPage = () => {
                                 const token = tokenResponse?.credential;
                                 
                                 if(token) {
-                                    history.push({
-                                        pathname: '/dashboard',
-                                        state: { token: token }
-                                      });
+                                    navigate('/dashboard',{state: { token: token }});
                                 }
                             }}
                             onError={() => {
