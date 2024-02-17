@@ -30,7 +30,7 @@ const LoginPage = () => {
                             onSuccess={tokenResponse => {
                                 console.log(tokenResponse);
                                 if(tokenResponse) {
-                                    navigate('/dashboard',{state: { token: tokenResponse }});
+                                    navigate('/dashboard',{state: { tokenResponse }});
                                 }
                             }}
                             onError={() => {
