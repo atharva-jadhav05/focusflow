@@ -32,8 +32,8 @@ const Dashboard = () => {
         function start() {
             gapi.client.init({
                 apiKey: "AIzaSyArRkSGzgX3RQME6a0sCBMJBfLDSkX-IaM",
-                client_id: "356377434224-gv1sfl0pk97qbiu2v2ub0fmsh8mh3plj.apps.googleusercontent.com",
-                scope: "https://www.googleapis.com/auth/drive",
+                clientId: "356377434224-gv1sfl0pk97qbiu2v2ub0fmsh8mh3plj.apps.googleusercontent.com",
+                scopes: "https://www.googleapis.com/auth/drive",
             })
         };
 
@@ -42,6 +42,18 @@ const Dashboard = () => {
         console.log(
             "Hello World"
         )
+
+        var accessToken = gapi.auth.getToken().access_token;
+
+        fetch('https://www.googleapis.com/drive/v3/about', {
+            method: "GET",
+            headers: new Headers({'Authorization': 'Bearer ' + accessToken})
+        }).then( (res) => {
+            console.log(res);
+        }).then( function(val) {
+            console.log(val);
+        });
+
     })
 
 
