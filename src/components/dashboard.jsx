@@ -1,10 +1,15 @@
 import { gapi } from "gapi-script";
 import React, { useEffect } from "react";
 import { useLocation } from 'react-router-dom';
+import StudySiteLandingPage from "./tempDash";;
+
 
 const Dashboard = () => {
     // when navigate function in login.jsx sends data, it adds it to the /dashboard page's location data
     // so now we get data by using location
+    
+    
+    
     const location = useLocation();
     const { state } = location;
 
@@ -45,21 +50,24 @@ const Dashboard = () => {
 
         // var accessToken = gapi.auth.getToken().access_token;
 
-        fetch('https://www.googleapis.com/drive/v3/about', {
-            method: "GET",
-            headers: new Headers({'Authorization': 'Bearer ' + access_token})
-        }).then( (res) => {
-            console.log(res);
-        }).then( function(val) {
-            console.log(val);
-        });
+        // fetch('https://www.googleapis.com/drive/v3/about', {
+        //     method: "GET",
+        //     headers: new Headers({'Authorization': 'Bearer ' + access_token})
+        // }).then( (res) => {
+        //     console.log(res);
+        // }).then( function(val) {
+        //     console.log(val);
+        // });
 
     })
 
 
     return (
         <>
-        <h2>Getting access token here</h2>            
+{/*         <h2>Getting access token here</h2>             */}
+        <StudySiteLandingPage/>
+
+            
         </>
     )
 }
