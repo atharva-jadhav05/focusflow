@@ -32,8 +32,8 @@ const Dashboard = () => {
         function start() {
             gapi.client.init({
                 apiKey: "AIzaSyArRkSGzgX3RQME6a0sCBMJBfLDSkX-IaM",
-                clientId: "356377434224-gv1sfl0pk97qbiu2v2ub0fmsh8mh3plj.apps.googleusercontent.com",
-                scopes: "https://www.googleapis.com/auth/drive",
+                client_id: "356377434224-gv1sfl0pk97qbiu2v2ub0fmsh8mh3plj.apps.googleusercontent.com",
+                scope: "https://www.googleapis.com/auth/drive",
             })
         };
 
