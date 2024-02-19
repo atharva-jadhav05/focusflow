@@ -72,11 +72,12 @@ const StudySiteLandingPage = () => {
     const confirmDelete = () => {
         deleteCard(selectedCardToDelete);
         setConfirmationPopupVisible(false);
-        hideContextMenu();
     };
 
     const showConfirmationPopup = (card) => {
         setConfirmationPopupVisible(true);
+                hideContextMenu();
+
         // setSelectedCardToDelete(card);
     };
 
