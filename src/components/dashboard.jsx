@@ -43,11 +43,11 @@ const Dashboard = () => {
             "Hello World"
         )
 
-        var accessToken = gapi.auth.getToken().access_token;
+        // var accessToken = gapi.auth.getToken().access_token;
 
         fetch('https://www.googleapis.com/drive/v3/about', {
             method: "GET",
-            headers: new Headers({'Authorization': 'Bearer ' + accessToken})
+            headers: new Headers({'Authorization': 'Bearer ' + access_token})
         }).then( (res) => {
             console.log(res);
         }).then( function(val) {
