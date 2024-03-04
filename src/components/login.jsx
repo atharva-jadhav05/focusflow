@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { GoogleLogin } from '@react-oauth/google';
+import { GoogleLogin, useGoogleLogin } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 
 import './login.css';
@@ -8,6 +8,8 @@ import LogoSvg from "./logosvg";
 const LoginPage = () => {
     const navigate = useNavigate();
     const [isSignUpActive, setIsSignUpActive] = useState(false);
+    const [ user, setUser ] = useState([]);
+    const [ profile, setProfile ] = useState([]);
 
     const handleSignUpClick = () => {
         setIsSignUpActive(true);
@@ -16,6 +18,30 @@ const LoginPage = () => {
     const handleSignInClick = () => {
         setIsSignUpActive(false);
     };
+
+    const login = useGoogleLogin({
+        onSuccess: (codeResponse) => setUser(codeResponse),
+        onError: (error) => console.log('Login Failed:', error)
+    });
+
+    useEffect(
+        () => {
+            if (user) {
+                axios
+                    .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                            Accept: 'application/json'
+                        }
+                    })
+                    .then((res) => {
+                        setProfile(res.data);
+                    })
+                    .catch((err) => console.log(err));
+            }
+        },
+        [ user ]
+    );
 
 
     return (
@@ -26,7 +52,8 @@ const LoginPage = () => {
                         <h1>Sign Up with Google</h1>
                         <br></br><br></br><br></br>
                         <div className="login-button">
-                        <GoogleLogin
+                            <button onClick={login}>Sign in with Google 🚀</button>
+                        {/* <GoogleLogin
                             onSuccess={tokenResponse => {
                                 console.log(tokenResponse);
                                 if(tokenResponse) {
@@ -36,7 +63,7 @@ const LoginPage = () => {
                             onError={() => {
                                 console.log('Login Failed');
                             }}
-                        />
+                        /> */}
                         </div>
                     </form>
                 </div>
