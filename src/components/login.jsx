@@ -45,17 +45,6 @@ const LoginPage = () => {
                         <br></br><br></br><br></br>
                         <div className="login-button">
                             <button onClick={login}>Sign in with Google 🚀</button>
-                        {/* <GoogleLogin
-                            onSuccess={tokenResponse => {
-                                console.log(tokenResponse);
-                                if(tokenResponse) {
-                                    navigate('/dashboard',{state: { tokenResponse }});
-                                }
-                            }}
-                            onError={() => {
-                                console.log('Login Failed');
-                            }}
-                        /> */}
                         </div>
                     </form>
                 </div>

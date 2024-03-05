@@ -11,8 +11,8 @@ import LogoSvg from './logosvg';
 const Dashboard = () => {
     const location = useLocation();
     const { state } = location;
-    const [ profile, setProfile ] = useState([]);
-    
+    const [profile, setProfile] = useState([]);
+
     const user = state?.user || null;
 
 
@@ -38,7 +38,7 @@ const Dashboard = () => {
     const addCardFromCustomBlock = () => {
         if (cardName.trim() !== '' && !cardNameExists(cardName, cards)) {
             const newCard = (
-                <div className="card" key={cardName}  onContextMenu={(e) => showContextMenu(e, newCard)}>
+                <div className="card" key={cardName} onContextMenu={(e) => showContextMenu(e, newCard)}>
                     <div className="card-img"></div>
                     <div className="card-footer">{cardName}</div>
                 </div>
@@ -89,7 +89,7 @@ const Dashboard = () => {
 
     const showConfirmationPopup = (card) => {
         setConfirmationPopupVisible(true);
-                hideContextMenu();
+        hideContextMenu();
 
         // setSelectedCardToDelete(card);
     };
@@ -109,95 +109,133 @@ const Dashboard = () => {
     };
 
 
-    useEffect(()=>{
+    useEffect(() => {
         console.log(user)
-
-        axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+        try {
+            axios
+                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+                    {
                         headers: {
                             Authorization: `Bearer ${user.access_token}`,
                             Accept: 'application/json'
                         }
                     })
-                    .then((res) => {
-                        setProfile(res.data);
-                        console.log(res.data);
-                        
-                    })
-                    .catch((err) => console.log(err));
-            }, 
-            [user]
+                .then((res) => {
+                    setProfile(res.data);
+                    console.log(res.data);
+
+                })
+                .catch((err) => console.log(err));
+
+
+            const accessToken = user.access_token;
+            const apiUrl = 'https://www.googleapis.com/drive/v3/files';
+            const folderName = 'FocusFlow';
+
+            // Check if the folder already exists
+            const checkResponse = await axios.get(apiUrl, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                params: {
+                    q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
+                },
+            });
+
+            if (checkResponse.data.files.length > 0) {
+                console.log('Folder already exists:', checkResponse.data.files[0]);
+            } else {
+                // If the folder doesn't exist, create it
+                const createResponse = await axios.post(apiUrl, {
+                    name: folderName,
+                    mimeType: 'application/vnd.google-apps.folder',
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                console.log('Folder created successfully:', createResponse.data);
+            }
+        } catch (error) {
+            console.error('Error checking or creating folder:', error);
+        }
+
+    },
+        [user]
     );
 
 
     return (
         <>
-        <div className='dash'>
-            <nav>
-                <LogoSvg/>
-                <button onClick={showCustomBlock} title="Add Card">
-                    +
-                </button>
-                <button className="return-btn" onClick={returnToLoginPage} title="Return to Login Page">
-                    Return to Login Page
-                </button>
-            </nav>
+            <div className='dash'>
+                <nav>
+                    <LogoSvg />
+                    <button onClick={showCustomBlock} title="Add Card">
+                        +
+                    </button>
+                    <button className="return-btn" onClick={returnToLoginPage} title="Return to Login Page">
+                        Return to Login Page
+                    </button>
+                </nav>
 
-            <div className="workspace-dropdown" id="workspaceDropdown">
-                {workspaceOptions}
-            </div>
-
-            <div className="container">
-                <div className="cards-container" id="cardsContainer">
-                    {cards}
+                <div className="workspace-dropdown" id="workspaceDropdown">
+                    {workspaceOptions}
                 </div>
-            </div>
 
-            {isCustomBlockVisible && (
-                <div>
-                    <div className="custom-overlay" onClick={hideCustomBlock}></div>
-                    <div className="custom-block">
-                        <label htmlFor="cardName">Enter Card Name:</label>
-                        <input
-                            type="text"
-                            id="cardName"
-                            placeholder="Card Name"
-                            value={cardName}
-                            onChange={(e) => setCardName(e.target.value)}
-                        />
-                        <button onClick={addCardFromCustomBlock}>Add Card</button>
-                        <button onClick={hideCustomBlock}>Cancel</button>
+                <div className="container">
+                    <div className="cards-container" id="cardsContainer">
+                        {cards}
                     </div>
                 </div>
-            )}
 
-            {isConfirmationPopupVisible && (
-                <div className="confirmation-popup">
-                    <label>Are you sure you want to delete this card?</label>
-                    <div className="confirmation-popup-buttons">
-                        <button className="confirm" onClick={confirmDelete}>
-                            Confirm
-                        </button>
-                        <button className="cancel" onClick={hideConfirmationPopup}>
+                {isCustomBlockVisible && (
+                    <div>
+                        <div className="custom-overlay" onClick={hideCustomBlock}></div>
+                        <div className="custom-block">
+                            <label htmlFor="cardName">Enter Card Name:</label>
+                            <input
+                                type="text"
+                                id="cardName"
+                                placeholder="Card Name"
+                                value={cardName}
+                                onChange={(e) => setCardName(e.target.value)}
+                            />
+                            <button onClick={addCardFromCustomBlock}>Add Card</button>
+                            <button onClick={hideCustomBlock}>Cancel</button>
+                        </div>
+                    </div>
+                )}
+
+                {isConfirmationPopupVisible && (
+                    <div className="confirmation-popup">
+                        <label>Are you sure you want to delete this card?</label>
+                        <div className="confirmation-popup-buttons">
+                            <button className="confirm" onClick={confirmDelete}>
+                                Confirm
+                            </button>
+                            <button className="cancel" onClick={hideConfirmationPopup}>
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                )}
+
+                {isContextMenuVisible && (
+                    <div
+                        className="context-menu"
+                        style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}
+                    >
+                        <div className="context-menu-item delete" onClick={showConfirmationPopup}>
+                            Delete
+                        </div>
+                        <div className="context-menu-item cancel" onClick={hideContextMenu}>
                             Cancel
-                        </button>
+                        </div>
                     </div>
-                </div>
-            )}
-
-            {isContextMenuVisible && (
-                <div
-                    className="context-menu"
-                    style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}
-                >
-                    <div className="context-menu-item delete" onClick={showConfirmationPopup}>
-                        Delete
-                    </div>
-                    <div className="context-menu-item cancel" onClick={hideContextMenu}>
-                        Cancel
-                    </div>
-                </div>
-            )}
-        </div>
+                )}
+            </div>
         </>
     )
 }
