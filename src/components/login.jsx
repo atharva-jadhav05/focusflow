@@ -32,25 +32,8 @@ const LoginPage = () => {
             if (user) {
                 console.log(user);
                 navigate('/dashboard', {state: { user }});
-                
-
-                axios
-                    .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
-                        headers: {
-                            Authorization: `Bearer ${user.access_token}`,
-                            Accept: 'application/json'
-                        }
-                    })
-                    .then((res) => {
-                        setProfile(res.data);
-                        console.log(res.data);
-                        
-                    })
-                    .catch((err) => console.log(err));
             }
-        },
-        [ user ]
-    );
+        });
 
 
     return (
