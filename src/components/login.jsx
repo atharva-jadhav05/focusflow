@@ -9,7 +9,7 @@ import LogoSvg from "./logosvg";
 const LoginPage = () => {
     const navigate = useNavigate();
     const [isSignUpActive, setIsSignUpActive] = useState(false);
-    const [ user, setUser ] = useState([]);
+    const [ user, setUser ] = useState();
     const [ profile, setProfile ] = useState([]);
 
     const handleSignUpClick = () => {
@@ -31,6 +31,8 @@ const LoginPage = () => {
         () => {
             if (user) {
                 console.log(user);
+                navigate('/dashboard', {state: { res }});
+                
 
                 axios
                     .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
@@ -42,7 +44,7 @@ const LoginPage = () => {
                     .then((res) => {
                         setProfile(res.data);
                         console.log(res.data);
-                        navigate('/dashboard', {state: { tokenResponse }});
+                        
                     })
                     .catch((err) => console.log(err));
             }

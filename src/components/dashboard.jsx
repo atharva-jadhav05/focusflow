@@ -2,6 +2,7 @@ import { gapi } from "gapi-script";
 import React, { useEffect } from "react";
 import { useLocation } from 'react-router-dom';
 import StudySiteLandingPage from "./tempDash";;
+import axios from 'axios';
 
 
 const Dashboard = () => {
@@ -23,7 +24,7 @@ const Dashboard = () => {
     // so we get the credential attribute from state cha tokenresponse chya aatun
     // if there, else assign null value to it
     
-    const access_token = state?.tokenResponse?.credential || null;
+    const user = state?.res || null;
 
 /**
  * Now use this access token to access google APIs and get data
@@ -34,19 +35,36 @@ const Dashboard = () => {
  */
 
     useEffect(()=>{
-        function start() {
-            gapi.client.init({
-                apiKey: "AIzaSyArRkSGzgX3RQME6a0sCBMJBfLDSkX-IaM",
-                client_id: "356377434224-gv1sfl0pk97qbiu2v2ub0fmsh8mh3plj.apps.googleusercontent.com",
-                scope: "https://www.googleapis.com/auth/drive",
-            })
-        };
+        // function start() {
+        //     gapi.client.init({
+        //         apiKey: "AIzaSyArRkSGzgX3RQME6a0sCBMJBfLDSkX-IaM",
+        //         client_id: "356377434224-gv1sfl0pk97qbiu2v2ub0fmsh8mh3plj.apps.googleusercontent.com",
+        //         scope: "https://www.googleapis.com/auth/drive",
+        //     })
+        // };
 
-        gapi.load('client:auth2', start);
+        // gapi.load('client:auth2', start);
 
-        console.log(
-            "Hello World"
-        )
+        console.log("Hello World")
+
+        axios
+                    .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+                        headers: {
+                            Authorization: `Bearer ${user.access_token}`,
+                            Accept: 'application/json'
+                        }
+                    })
+                    .then((res) => {
+                        setProfile(res.data);
+                        console.log(res.data);
+                        
+                    })
+                    .catch((err) => console.log(err));
+            }, 
+            [user]
+
+
+
 
         // var accessToken = gapi.auth.getToken().access_token;
 
@@ -59,7 +77,7 @@ const Dashboard = () => {
         //     console.log(val);
         // });
 
-    })
+    );
 
 
     return (
