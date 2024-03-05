@@ -12,6 +12,7 @@ const Dashboard = () => {
     const location = useLocation();
     const { state } = location;
     const [profile, setProfile] = useState([]);
+    const [mainFolderId, setMainFolderId] = useState();
 
     const user = state?.user || null;
 
@@ -35,8 +36,46 @@ const Dashboard = () => {
         setCardName('');
     };
 
-    const addCardFromCustomBlock = () => {
+    const addCardFromCustomBlock = async () => {
+
         if (cardName.trim() !== '' && !cardNameExists(cardName, cards)) {
+            try {
+                const accessToken = user.access_token;
+                const apiUrl = 'https://www.googleapis.com/drive/v3/files';
+                const folderName = cardName;
+
+                // Check if the folder already exists
+                const checkResponse = await axios.get(apiUrl, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                    params: {
+                        q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
+                    },
+                });
+
+                if (checkResponse.data.files.length > 0) {
+                    console.log('Folder already exists:', checkResponse.data.files[0]);
+                } else {
+                    // If the folder doesn't exist, create it
+                    const createResponse = await axios.post(apiUrl, {
+                        name: folderName,
+                        mimeType: 'application/vnd.google-apps.folder',
+                        parents: [mainFolderId],
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                        },
+                    });
+
+                    console.log('Workspace created successfully:', createResponse.data);
+                }
+            } catch (error) {
+                console.error('Error checking or creating workspace:', error);
+            }
+
+
             const newCard = (
                 <div className="card" key={cardName} onContextMenu={(e) => showContextMenu(e, newCard)}>
                     <div className="card-img"></div>
@@ -55,6 +94,8 @@ const Dashboard = () => {
             setWorkspaceOptions([...workspaceOptions, newWorkspaceOption]);
 
             hideCustomBlock();
+
+
         }
     };
 
@@ -108,46 +149,47 @@ const Dashboard = () => {
         return false;
     };
 
+    const checkAndCreateFolder = async (folder_name) => {
+        try {
+            const accessToken = user.access_token; // Replace with your access token
+            const apiUrl = 'https://www.googleapis.com/drive/v3/files';
+            const folderName = folder_name;
 
-    useEffect(() => {
-        console.log(user)
+            // Check if the folder already exists
+            const checkResponse = await axios.get(apiUrl, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                params: {
+                    q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
+                },
+            });
 
-        const checkAndCreateFolder = async () => {
-            try {
-                const accessToken = user.access_token; // Replace with your access token
-                const apiUrl = 'https://www.googleapis.com/drive/v3/files';
-                const folderName = 'FocusFlow';
-
-                // Check if the folder already exists
-                const checkResponse = await axios.get(apiUrl, {
+            if (checkResponse.data.files.length > 0) {
+                console.log('Folder already exists:', checkResponse.data.files[0]);
+            } else {
+                // If the folder doesn't exist, create it
+                const createResponse = await axios.post(apiUrl, {
+                    name: folderName,
+                    mimeType: 'application/vnd.google-apps.folder',
+                }, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
-                    },
-                    params: {
-                        q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
+                        'Content-Type': 'application/json',
                     },
                 });
 
-                if (checkResponse.data.files.length > 0) {
-                    console.log('Folder already exists:', checkResponse.data.files[0]);
-                } else {
-                    // If the folder doesn't exist, create it
-                    const createResponse = await axios.post(apiUrl, {
-                        name: folderName,
-                        mimeType: 'application/vnd.google-apps.folder',
-                    }, {
-                        headers: {
-                            Authorization: `Bearer ${accessToken}`,
-                            'Content-Type': 'application/json',
-                        },
-                    });
-
-                    console.log('Folder created successfully:', createResponse.data);
-                }
-            } catch (error) {
-                console.error('Error checking or creating folder:', error);
+                console.log('Folder created successfully:', createResponse.data);
+                setMainFolderId(createResponse.data.id);
             }
-        };
+        } catch (error) {
+            console.error('Error checking or creating folder:', error);
+        }
+    };
+
+
+    useEffect(() => {
+        console.log(user)
 
         axios
             .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
@@ -166,7 +208,7 @@ const Dashboard = () => {
 
 
         // Call the function to check and create the folder when the component mounts
-        checkAndCreateFolder();
+        checkAndCreateFolder(FocusFlow);
     },
         [user]
     );
