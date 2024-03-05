@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
-import './tempDash.css';
+import './dashboard.css';
 import LogoSvg from './logosvg';
 
 
