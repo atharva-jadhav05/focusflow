@@ -208,7 +208,7 @@ const Dashboard = () => {
 
 
         // Call the function to check and create the folder when the component mounts
-        checkAndCreateFolder(FocusFlow);
+        checkAndCreateFolder('FocusFlow');
     },
         [user]
     );
