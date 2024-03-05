@@ -3,56 +3,116 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 
-import StudySiteLandingPage from "./tempDash";;
+import './tempDash.css';
+import LogoSvg from './logosvg';
 
 
 
 const Dashboard = () => {
-    // when navigate function in login.jsx sends data, it adds it to the /dashboard page's location data
-    // so now we get data by using location
-    
-    
-    
     const location = useLocation();
     const { state } = location;
     const [ profile, setProfile ] = useState([]);
-
-
-    // state variable gets data in the format
-    // tokenResponse: {
-    //     clientId: "356377434224-gv1sfl0pk97qbiu2v2ub0fmsh8mh3plj.apps.googleusercontent.com"
-    //     credential: "eyJhbGciOiJSUzI1NiIsImtpZCI6ImVkODA2ZjE4NDJiNTg4MDU0YjE4YjY2OWRkMWEwOWE0ZjM2N2FmYzQiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJhenAiOiIzNTYzNzc0MzQyMjQtZ3Yxc2ZsMHBrOTdxYml1MnYydWIwZm1zaDhtaDNwbGouYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiIzNTYzNzc0MzQyMjQtZ3Yxc2ZsMHBrOTdxYml1MnYydWIwZm1zaDhtaDNwbGouYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMTczMzI1MTUxNjc1MzcxNzE3MTMiLCJlbWFpbCI6ImF0aGFydmFqYWRoYXY1OTFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5iZiI6MTcwODIxMDU2MywibmFtZSI6IkF0aGFydmEgSmFkaGF2IiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0lPQUR0QkpaQU9NSzc1R3NFWnllQzRUeWRhWDE2U3dBclZZYnY3YXh4WHlBPXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6IkF0aGFydmEiLCJmYW1pbHlfbmFtZSI6IkphZGhhdiIsImxvY2FsZSI6ImVuIiwiaWF0IjoxNzA4MjEwODYzLCJleHAiOjE3MDgyMTQ0NjMsImp0aSI6IjQ1MDI1MGZmMTY3M2IxZDM3MGE5MTMwZWRmZWJiMjRhNTgwZWU3NzYifQ.gSswX2X5ARKc-pCsIBWgA3tsRJsMtzE4aGSZhFYsQdP3nk_kM-x7zbWXHfohuhSzdzZQ21gdaIxQkd0L6rZbQT9wcm6VX5Eo0YeNTxUrHEAXFLylbxjKcPEvGnh7Xc2RpjGKrOH3X9LsjGb7aBClu42AM1FVw2GqSPVisCvday9HZcPTgXcT_hBj0828ojhp_i2MBNKDin-9Ba_ZusHDt25fq4U3P_DdedaOEC4T118ZK99WvQLUKEEdFDnRImVc0EC2rXIbZbK0h1FZH7Tw2HQpOe6OPG1HpUkHrCq2LHT0rYU865cIJnIXPCmDXhTMeH7icS2w3QftiFsZc-l6DA"
-    //     select_by: "btn"
-    // } 
-
-    // so we get the credential attribute from state cha tokenresponse chya aatun
-    // if there, else assign null value to it
     
-    const user = state?.res || null;
+    const user = state?.user || null;
 
-/**
- * Now use this access token to access google APIs and get data
- * for now, only print data on page or in console
- * check if data is coming
- * then we will do pudhcha
- * GOT IT?
- */
+
+    const [cardName, setCardName] = useState('');
+    const [isCustomBlockVisible, setCustomBlockVisible] = useState(false);
+    const [cards, setCards] = useState([]);
+    const [workspaceOptions, setWorkspaceOptions] = useState([]);
+    const [isConfirmationPopupVisible, setConfirmationPopupVisible] = useState(false);
+    const [selectedCardToDelete, setSelectedCardToDelete] = useState(null);
+    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+    const [isContextMenuVisible, setContextMenuVisible] = useState(false);
+
+
+    const showCustomBlock = () => {
+        setCustomBlockVisible(true);
+    };
+
+    const hideCustomBlock = () => {
+        setCustomBlockVisible(false);
+        setCardName('');
+    };
+
+    const addCardFromCustomBlock = () => {
+        if (cardName.trim() !== '' && !cardNameExists(cardName, cards)) {
+            const newCard = (
+                <div className="card" key={cardName}  onContextMenu={(e) => showContextMenu(e, newCard)}>
+                    <div className="card-img"></div>
+                    <div className="card-footer">{cardName}</div>
+                </div>
+            );
+
+            setCards([...cards, newCard]);
+
+            const newWorkspaceOption = (
+                <a href="#" key={cardName} onClick={() => showConfirmationPopup(newCard)}>
+                    {cardName}
+                </a>
+            );
+
+            setWorkspaceOptions([...workspaceOptions, newWorkspaceOption]);
+
+            hideCustomBlock();
+        }
+    };
+
+    const returnToLoginPage = () => {
+        // Add the functionality to return to the login page here
+        alert('Returning to Login Page');
+    };
+
+    const deleteCard = (card) => {
+        const updatedCards = cards.filter((c) => c.key !== card.key);
+        const updatedWorkspaceOptions = workspaceOptions.slice(0, -1);
+
+        setCards(updatedCards);
+        setWorkspaceOptions(updatedWorkspaceOptions);
+    };
+
+    const showContextMenu = (event, card) => {
+        event.preventDefault();
+        setContextMenuPosition({ x: event.clientX, y: event.clientY });
+        setSelectedCardToDelete(card);
+        setContextMenuVisible(true);
+    };
+
+    const hideContextMenu = () => {
+        setContextMenuVisible(false);
+    };
+
+    const confirmDelete = () => {
+        deleteCard(selectedCardToDelete);
+        setConfirmationPopupVisible(false);
+    };
+
+    const showConfirmationPopup = (card) => {
+        setConfirmationPopupVisible(true);
+                hideContextMenu();
+
+        // setSelectedCardToDelete(card);
+    };
+
+    const hideConfirmationPopup = () => {
+        setConfirmationPopupVisible(false);
+        setSelectedCardToDelete(null);
+    };
+
+    const cardNameExists = (name, container) => {
+        for (const existingCard of container) {
+            if (existingCard.key === name) {
+                return true;
+            }
+        }
+        return false;
+    };
+
 
     useEffect(()=>{
-        // function start() {
-        //     gapi.client.init({
-        //         apiKey: "AIzaSyArRkSGzgX3RQME6a0sCBMJBfLDSkX-IaM",
-        //         client_id: "356377434224-gv1sfl0pk97qbiu2v2ub0fmsh8mh3plj.apps.googleusercontent.com",
-        //         scope: "https://www.googleapis.com/auth/drive",
-        //     })
-        // };
+        console.log(user)
 
-        // gapi.load('client:auth2', start);
-
-        console.log("Hello World")
-
-        axios
-                    .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
+        axios.get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
                         headers: {
                             Authorization: `Bearer ${user.access_token}`,
                             Accept: 'application/json'
@@ -66,30 +126,78 @@ const Dashboard = () => {
                     .catch((err) => console.log(err));
             }, 
             [user]
-
-
-
-
-        // var accessToken = gapi.auth.getToken().access_token;
-
-        // fetch('https://www.googleapis.com/drive/v3/about', {
-        //     method: "GET",
-        //     headers: new Headers({'Authorization': 'Bearer ' + access_token})
-        // }).then( (res) => {
-        //     console.log(res);
-        // }).then( function(val) {
-        //     console.log(val);
-        // });
-
     );
 
 
     return (
         <>
-{/*         <h2>Getting access token here</h2>             */}
-        <StudySiteLandingPage/>
+        <div className='dash'>
+            <nav>
+                <LogoSvg/>
+                <button onClick={showCustomBlock} title="Add Card">
+                    +
+                </button>
+                <button className="return-btn" onClick={returnToLoginPage} title="Return to Login Page">
+                    Return to Login Page
+                </button>
+            </nav>
 
-            
+            <div className="workspace-dropdown" id="workspaceDropdown">
+                {workspaceOptions}
+            </div>
+
+            <div className="container">
+                <div className="cards-container" id="cardsContainer">
+                    {cards}
+                </div>
+            </div>
+
+            {isCustomBlockVisible && (
+                <div>
+                    <div className="custom-overlay" onClick={hideCustomBlock}></div>
+                    <div className="custom-block">
+                        <label htmlFor="cardName">Enter Card Name:</label>
+                        <input
+                            type="text"
+                            id="cardName"
+                            placeholder="Card Name"
+                            value={cardName}
+                            onChange={(e) => setCardName(e.target.value)}
+                        />
+                        <button onClick={addCardFromCustomBlock}>Add Card</button>
+                        <button onClick={hideCustomBlock}>Cancel</button>
+                    </div>
+                </div>
+            )}
+
+            {isConfirmationPopupVisible && (
+                <div className="confirmation-popup">
+                    <label>Are you sure you want to delete this card?</label>
+                    <div className="confirmation-popup-buttons">
+                        <button className="confirm" onClick={confirmDelete}>
+                            Confirm
+                        </button>
+                        <button className="cancel" onClick={hideConfirmationPopup}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {isContextMenuVisible && (
+                <div
+                    className="context-menu"
+                    style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}
+                >
+                    <div className="context-menu-item delete" onClick={showConfirmationPopup}>
+                        Delete
+                    </div>
+                    <div className="context-menu-item cancel" onClick={hideContextMenu}>
+                        Cancel
+                    </div>
+                </div>
+            )}
+        </div>
         </>
     )
 }
