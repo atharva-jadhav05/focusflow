@@ -20,16 +20,18 @@ const LoginPage = () => {
         setIsSignUpActive(false);
     };
 
+
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
-        onError: (error) => console.log('Login Failed:', error)
+        onError: (error) => console.log('Login Failed:', error),
+        scope: "email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid https://www.googleapis.com/auth/drive",
     });
 
     useEffect(
         () => {
             if (user) {
                 console.log(user);
-                
+
                 axios
                     .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`, {
                         headers: {
@@ -40,6 +42,7 @@ const LoginPage = () => {
                     .then((res) => {
                         setProfile(res.data);
                         console.log(res.data);
+                        navigate('/dashboard', {state: { tokenResponse }});
                     })
                     .catch((err) => console.log(err));
             }
