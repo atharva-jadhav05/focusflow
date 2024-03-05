@@ -31,7 +31,7 @@ const LoginPage = () => {
         () => {
             if (user) {
                 console.log(user);
-                navigate('/dashboard', {state: { res }});
+                navigate('/dashboard', {state: { user }});
                 
 
                 axios

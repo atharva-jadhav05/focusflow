@@ -13,6 +13,8 @@ const Dashboard = () => {
     
     const location = useLocation();
     const { state } = location;
+    const [ profile, setProfile ] = useState([]);
+
 
     // state variable gets data in the format
     // tokenResponse: {
