@@ -111,57 +111,62 @@ const Dashboard = () => {
 
     useEffect(() => {
         console.log(user)
-        try {
-            axios
-                .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
-                    {
-                        headers: {
-                            Authorization: `Bearer ${user.access_token}`,
-                            Accept: 'application/json'
-                        }
-                    })
-                .then((res) => {
-                    setProfile(res.data);
-                    console.log(res.data);
 
-                })
-                .catch((err) => console.log(err));
+        const checkAndCreateFolder = async () => {
+            try {
+                const accessToken = user.access_token; // Replace with your access token
+                const apiUrl = 'https://www.googleapis.com/drive/v3/files';
+                const folderName = 'FocusFlow';
 
-
-            const accessToken = user.access_token;
-            const apiUrl = 'https://www.googleapis.com/drive/v3/files';
-            const folderName = 'FocusFlow';
-
-            // Check if the folder already exists
-            const checkResponse = await axios.get(apiUrl, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
-                params: {
-                    q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
-                },
-            });
-
-            if (checkResponse.data.files.length > 0) {
-                console.log('Folder already exists:', checkResponse.data.files[0]);
-            } else {
-                // If the folder doesn't exist, create it
-                const createResponse = await axios.post(apiUrl, {
-                    name: folderName,
-                    mimeType: 'application/vnd.google-apps.folder',
-                }, {
+                // Check if the folder already exists
+                const checkResponse = await axios.get(apiUrl, {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json',
+                    },
+                    params: {
+                        q: `name='${folderName}' and mimeType='application/vnd.google-apps.folder'`,
                     },
                 });
 
-                console.log('Folder created successfully:', createResponse.data);
-            }
-        } catch (error) {
-            console.error('Error checking or creating folder:', error);
-        }
+                if (checkResponse.data.files.length > 0) {
+                    console.log('Folder already exists:', checkResponse.data.files[0]);
+                } else {
+                    // If the folder doesn't exist, create it
+                    const createResponse = await axios.post(apiUrl, {
+                        name: folderName,
+                        mimeType: 'application/vnd.google-apps.folder',
+                    }, {
+                        headers: {
+                            Authorization: `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                        },
+                    });
 
+                    console.log('Folder created successfully:', createResponse.data);
+                }
+            } catch (error) {
+                console.error('Error checking or creating folder:', error);
+            }
+        };
+
+        axios
+            .get(`https://www.googleapis.com/oauth2/v1/userinfo?access_token=${user.access_token}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${user.access_token}`,
+                        Accept: 'application/json'
+                    }
+                })
+            .then((res) => {
+                setProfile(res.data);
+                console.log(res.data);
+
+            })
+            .catch((err) => console.log(err));
+
+
+        // Call the function to check and create the folder when the component mounts
+        checkAndCreateFolder();
     },
         [user]
     );
