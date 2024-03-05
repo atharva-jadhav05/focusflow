@@ -167,6 +167,8 @@ const Dashboard = () => {
 
             if (checkResponse.data.files.length > 0) {
                 console.log('Folder already exists:', checkResponse.data.files[0]);
+                setMainFolderId(checkResponse.data.files[0].id);
+                console.log('id of parent folder: ', mainFolderId);
             } else {
                 // If the folder doesn't exist, create it
                 const createResponse = await axios.post(apiUrl, {
@@ -180,12 +182,9 @@ const Dashboard = () => {
                 });
 
                 console.log('Folder created successfully:', createResponse.data);
+                setMainFolderId(createResponse.data.id);
+                console.log('id of parent folder: ', mainFolderId);
             }
-            
-            setMainFolderId(createResponse.data.id);
-            console.log('id of parent folder: ', mainFolderId);
-
-
         } catch (error) {
             console.error('Error checking or creating folder:', error);
         }
