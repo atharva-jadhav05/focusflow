@@ -181,6 +181,7 @@ const Dashboard = () => {
 
                 console.log('Folder created successfully:', createResponse.data);
                 setMainFolderId(createResponse.data.id);
+                console.log('id of parent folder: ', mainFolderId);
             }
         } catch (error) {
             console.error('Error checking or creating folder:', error);
