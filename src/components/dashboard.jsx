@@ -1,8 +1,10 @@
-import { gapi } from "gapi-script";
+// import { gapi } from "gapi-script";
 import React, { useEffect, useState } from "react";
 import { useLocation } from 'react-router-dom';
-import StudySiteLandingPage from "./tempDash";;
 import axios from 'axios';
+
+import StudySiteLandingPage from "./tempDash";;
+
 
 
 const Dashboard = () => {
