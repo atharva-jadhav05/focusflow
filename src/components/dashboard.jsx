@@ -12,7 +12,7 @@ const Dashboard = () => {
     const location = useLocation();
     const { state } = location;
     const [profile, setProfile] = useState([]);
-    const [mainFolderId, setMainFolderId] = useState();
+    const [mainFolderId, setMainFolderId] = useState(null);
 
     const user = state?.user || null;
 
@@ -43,6 +43,9 @@ const Dashboard = () => {
                 const accessToken = user.access_token;
                 const apiUrl = 'https://www.googleapis.com/drive/v3/files';
                 const folderName = cardName;
+                const focusFlowId = mainFolderId;
+
+                console.log('Id of parent folder: ', focusFlowId);
 
                 // Check if the folder already exists
                 const checkResponse = await axios.get(apiUrl, {
@@ -61,7 +64,7 @@ const Dashboard = () => {
                     const createResponse = await axios.post(apiUrl, {
                         name: folderName,
                         mimeType: 'application/vnd.google-apps.folder',
-                        parents: [mainFolderId],
+                        parents: [focusFlowId],
                     }, {
                         headers: {
                             Authorization: `Bearer ${accessToken}`,
@@ -168,8 +171,8 @@ const Dashboard = () => {
             if (checkResponse.data.files.length > 0) {
                 console.log('Folder already exists:', checkResponse.data.files[0]);
                 setMainFolderId(checkResponse.data.files[0].id);
-                console.log('id of parent folder: ', mainFolderId);
-                console.log('id of parent folder: ', checkResponse.data.files[0].id);
+                // console.log('id of parent folder: ', mainFolderId);
+                // console.log('id of parent folder: ', checkResponse.data.files[0].id);
             } else {
                 // If the folder doesn't exist, create it
                 const createResponse = await axios.post(apiUrl, {
@@ -184,8 +187,8 @@ const Dashboard = () => {
 
                 console.log('Folder created successfully:', createResponse.data);
                 setMainFolderId(createResponse.data.id);
-                console.log('id of parent folder: ', mainFolderId);
-                console.log('id of parent folder: ', createResponse.data.id);
+                // console.log('id of parent folder: ', mainFolderId);
+                // console.log('id of parent folder: ', createResponse.data.id);
             }
         } catch (error) {
             console.error('Error checking or creating folder:', error);
