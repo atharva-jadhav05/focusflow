@@ -16,10 +16,11 @@ const Dashboard = () => {
 
     const user = state?.user || null;
 
+    // to store data of cards
+    const [cards, setCards] = useState([]);
 
     const [cardName, setCardName] = useState('');
     const [isCustomBlockVisible, setCustomBlockVisible] = useState(false);
-    const [cards, setCards] = useState([]);
     const [workspaceOptions, setWorkspaceOptions] = useState([]);
     const [isConfirmationPopupVisible, setConfirmationPopupVisible] = useState(false);
     const [selectedCardToDelete, setSelectedCardToDelete] = useState(null);
@@ -34,6 +35,19 @@ const Dashboard = () => {
     const hideCustomBlock = () => {
         setCustomBlockVisible(false);
         setCardName('');
+    };
+
+    const addCardDataToList = (cardName, folderId) => {
+        setCards(prevList => [...prevList, {name: cardName, id: folderId}]);
+    }
+
+    const cardNameExists = (name, container) => {
+        for (const existingCard of container) {
+            if (existingCard.name === name) {
+                return true;
+            }
+        }
+        return false;
     };
 
     const addCardFromCustomBlock = async () => {
@@ -143,14 +157,7 @@ const Dashboard = () => {
         setSelectedCardToDelete(null);
     };
 
-    const cardNameExists = (name, container) => {
-        for (const existingCard of container) {
-            if (existingCard.key === name) {
-                return true;
-            }
-        }
-        return false;
-    };
+    
 
     const checkAndCreateFolder = async (folder_name) => {
         try {
