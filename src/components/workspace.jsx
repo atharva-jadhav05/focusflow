@@ -25,9 +25,9 @@ const Workspace = () => {
             },
         });
 
-        const pdf_files = response.data.files;
-        setFiles(pdf_files)
-        console.log(pdf_files);
+        const pdf_files = response.data;
+        // setFiles(pdf_files)
+        console.log(response);
 
     });
 
