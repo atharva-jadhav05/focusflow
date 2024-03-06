@@ -43,10 +43,10 @@ const Workspace = () => {
         axios.get(url, { headers, responseType: 'blob' })
             .then(response => {
                 console.log(response);
-                const pdfBlob = response.data;
+                const pdfBlob = new Blob([response.data], {type: 'application/pdf'});
                 const pdfUrl = URL.createObjectURL(pdfBlob);
 
-                
+
                 const iframe = document.createElement('iframe');
                 iframe.src = pdfUrl;
                 iframe.style.width = '100%';
