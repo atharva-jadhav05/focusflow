@@ -62,6 +62,7 @@ const Workspace = () => {
     const addBookmark = () => {
         setBookmarks([...bookmarks, currentPage]);
         console.log(currentPage);
+        console.log(iframeRef);
       };
 
 
