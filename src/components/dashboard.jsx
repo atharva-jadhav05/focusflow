@@ -214,7 +214,6 @@ const Dashboard = () => {
                 console.log('Folder already exists:', checkResponse.data.files[0]);
                 setMainFolderId(checkResponse.data.files[0].id);
                 
-                getDriveFolders(checkResponse.data.files[0].id);
                 // console.log('id of parent folder: ', mainFolderId);
                 // console.log('id of parent folder: ', checkResponse.data.files[0].id);
             } else {
@@ -231,8 +230,6 @@ const Dashboard = () => {
 
                 console.log('Folder created successfully:', createResponse.data);
                 setMainFolderId(createResponse.data.id);
-
-                getDriveFolders(createResponse.data.id);
                 // console.log('id of parent folder: ', mainFolderId);
                 // console.log('id of parent folder: ', createResponse.data.id);
             }
@@ -286,7 +283,7 @@ const Dashboard = () => {
               });
 
               console.log(cards);
-              
+
         } catch (error) {
             console.error('Error fetching folders:', error);
           }
@@ -314,10 +311,11 @@ const Dashboard = () => {
 
         // Call the function to check and create the folder when the component mounts
         checkAndCreateFolder('FocusFlow');
+        getDriveFolders(mainFolderId);
 
 
     },
-        [user]
+        [user, mainFolderId, cards]
     );
 
 
