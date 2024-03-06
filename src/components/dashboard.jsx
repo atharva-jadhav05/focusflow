@@ -46,7 +46,7 @@ const Dashboard = () => {
 
     const cardNameExists = (name, container) => {
         for (const existingCard of container) {
-            if (existingCard.name === name) {
+            if (existingCard.key === name) {
                 return true;
             }
         }
@@ -125,8 +125,6 @@ const Dashboard = () => {
     const deleteCard = async (card) => {
         try {
 
-            console.log(cardData);
-            console.log(card);
             const cardToDelete = cardData.find((c) => c.name === card.key);
             console.log(cardToDelete);
 
@@ -258,12 +256,12 @@ const Dashboard = () => {
             });
 
             const folders = response.data.files;
-            // console.log('Folders within the specified folder:', folders);
+            console.log('Folders in drive FocusFlow');
 
             folders.forEach((folder) => {
-                console.log(folder);
                 if (folder.name.trim() !== '' && !cardNameExists(folder.name, cards)) {
                     
+                    console.log(folder);
                     addCardDataToList(folder.name, folder.id);
 
                     const newCard = (
@@ -274,24 +272,17 @@ const Dashboard = () => {
                     );
 
                     setCards([...cards, newCard]);
+
                     const newWorkspaceOption = (
-                        <a href="#" key={cardName} onClick={() => showConfirmationPopup(newCard)}>
-                            {cardName}
+                        <a href="#" key={folder.name} onClick={() => showConfirmationPopup(newCard)}>
+                            {folder.name}
                         </a>
                     );
         
                     setWorkspaceOptions([...workspaceOptions, newWorkspaceOption]);
-        
-                    hideCustomBlock();
-
 
                 }
-                // setCardName(folder.name);
-                // addCardFromCustomBlock();
               });
-      
-
-            
         } catch (error) {
             console.error('Error fetching folders:', error);
           }
