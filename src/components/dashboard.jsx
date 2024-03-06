@@ -151,7 +151,7 @@ const Dashboard = () => {
     
         // If the folder was successfully deleted from Google Drive, update the state
         const updatedCards = cards.filter((c) => c.key !== card.key);
-        const updatedCardData = cardData.filter((c) => c.name !=== card.key);
+        const updatedCardData = cardData.filter((c) => c.name !== card.key);
         const updatedWorkspaceOptions = workspaceOptions.slice(0, -1);
 
         setCards(updatedCards);
