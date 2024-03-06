@@ -126,7 +126,7 @@ const Dashboard = () => {
         try {
 
         console.log(card, '\n');
-        const cardToDelete = cards.find((c) => c.name === card.name);
+        const cardToDelete = cards.find((c) => c.name === card.key);
         console.log(cardToDelete);
 
         if (!cardToDelete) {
