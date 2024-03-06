@@ -44,7 +44,9 @@ const Workspace = () => {
             .then(response => {
                 console.log(response);
                 const pdfBlob = new Blob([response.data], {type: 'application/pdf'});
+                console.log(pdfBlob);
                 const pdfUrl = URL.createObjectURL(pdfBlob);
+                console.log(pdfUrl);
 
 
                 const iframe = document.createElement('iframe');
@@ -53,7 +55,7 @@ const Workspace = () => {
                 iframe.style.height = '100%';
                 iframe.style.border = 'none';
 
-                const pdfContainer = document.getElementById('pdfContainer');
+                const pdfContainer = document.getElementById('pdf-viewer');
                 pdfContainer.innerHTML = ''; // Clear existing content
                 pdfContainer.appendChild(iframe);
             })
