@@ -70,6 +70,7 @@ const Workspace = () => {
 
     return (
         <>
+        <div className="workspace">
             {/* <!-- Navbar --> */}
             <div class="navbar">
                 <div class="logo">
@@ -121,6 +122,7 @@ const Workspace = () => {
 
 
             {console.log(folderId, ' ', accessToken, ' ', folderName)}
+            </div>
         </>
     )
 }

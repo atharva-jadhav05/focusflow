@@ -1,187 +1,193 @@
-.navbar {
-    background-color: black;
-    border-bottom: 1px solid #555;
-    color: white;
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: fixed;
-    width: 100%;
-    top: 0;
-    z-index: 1000;
-}
+.workspace {
 
-.navbar .logo img {
-    height: 30px;
-    vertical-align: middle;
-}
+    .navbar {
+        background-color: black;
+        border-bottom: 1px solid #555;
+        color: white;
+        padding: 10px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+    }
 
-.navbar .menu {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    display: inline-block;
-}
+    .navbar .logo img {
+        height: 30px;
+        vertical-align: middle;
+    }
 
-.navbar .menu li {
-    display: inline-block;
-    margin-right: 20px;
-}
+    .navbar .menu {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        display: inline-block;
+    }
 
-.navbar .menu li a {
-    color: white;
-    text-decoration: none;
-}
+    .navbar .menu li {
+        display: inline-block;
+        margin-right: 20px;
+    }
 
-.navbar .dropdown {
-    position: relative;
-}
+    .navbar .menu li a {
+        color: white;
+        text-decoration: none;
+    }
 
-.navbar .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #333;
-    min-width: 160px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    z-index: 1;
-    overflow-y: auto;
-    max-height: 200px;
-    flex-direction: column;
-    padding: 10px;
-}
+    .navbar .dropdown {
+        position: relative;
+    }
 
-.navbar .dropdown-content div {
-    padding: 5px 0;
-}
+    .navbar .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #333;
+        min-width: 160px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+        overflow-y: auto;
+        max-height: 200px;
+        flex-direction: column;
+        padding: 10px;
+    }
 
-.navbar .dropdown-content input[type="text"] {
-    width: calc(100% - 20px);
-    margin: 10px;
-    padding: 5px;
-    border: 1px solid #555;
-    border-radius: 3px;
-}
+    .navbar .dropdown-content div {
+        padding: 5px 0;
+    }
 
-.navbar .dropdown-content button {
-    margin: 0 10px 10px 10px;
-    padding: 5px 10px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-}
+    .navbar .dropdown-content input[type="text"] {
+        width: calc(100% - 20px);
+        margin: 10px;
+        padding: 5px;
+        border: 1px solid #555;
+        border-radius: 3px;
+    }
 
-.navbar .dropdown-content button:hover {
-    background-color: #0056b3;
-}
+    .navbar .dropdown-content button {
+        margin: 0 10px 10px 10px;
+        padding: 5px 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
 
-.navbar .dropdown:hover .dropdown-content {
-    display: flex;
-}
+    .navbar .dropdown-content button:hover {
+        background-color: #0056b3;
+    }
 
-.container {
-    display: flex;
-    justify-content: space-between;
-    padding: 70px 20px 20px;
-    height: calc(100vh - 70px);
-}
+    .navbar .dropdown:hover .dropdown-content {
+        display: flex;
+    }
 
-.playlist,
-.pdf-viewer,
-.checklist {
-    width: 30%;
-    height: 100%;
-}
+    .container {
+        display: flex;
+        justify-content: space-between;
+        padding: 70px 20px 20px;
+        height: calc(100vh - 70px);
+    }
 
-.pdf-viewer {
-    width: 70%;
-    padding-bottom: 5px;
-    position: relative;
-}
+    .playlist,
+    .pdf-viewer,
+    .checklist {
+        width: 30%;
+        height: 100%;
+    }
 
-.pdf-button-container {
-    overflow-y: auto;
-    height: 100%;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
+    .pdf-viewer {
+        width: 70%;
+        padding-bottom: 5px;
+        position: relative;
+    }
 
-.pdf-button-container::-webkit-scrollbar {
-    display: none;
-}
+    .pdf-button-container {
+        overflow-y: auto;
+        height: 100%;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
 
-.pdf-button {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 5px;
-    text-align: left;
-    background-color: #1A1A2E;
-    color: #FFFBEB;
-    border: 1px solid #555;
-    border-radius: 5px;
-    cursor: pointer;
-    position: relative;
-    transition: transform 0.2s ease; /* Smooth transition for hover animation */
-}
+    .pdf-button-container::-webkit-scrollbar {
+        display: none;
+    }
 
-.pdf-button::after {
-    content: "\2713";
-    font-size: 14px;
-    color: #fff;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    opacity: 0;
-}
+    .pdf-button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 5px;
+        text-align: left;
+        background-color: #1A1A2E;
+        color: #FFFBEB;
+        border: 1px solid #555;
+        border-radius: 5px;
+        cursor: pointer;
+        position: relative;
+        transition: transform 0.2s ease;
+        /* Smooth transition for hover animation */
+    }
 
-.pdf-button.checked {
-    background-color: #007bff;
-    color: white;
-}
+    .pdf-button::after {
+        content: "\2713";
+        font-size: 14px;
+        color: #fff;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        opacity: 0;
+    }
 
-.pdf-button.checked::after {
-    opacity: 1;
-}
+    .pdf-button.checked {
+        background-color: #007bff;
+        color: white;
+    }
 
-.pdf-button:hover {
-    transform: scale(1.05); /* Scale up the button on hover */
-}
+    .pdf-button.checked::after {
+        opacity: 1;
+    }
 
-.pdf-viewer iframe {
-    width: 100%;
-    height: calc(100% - 5px);
-}
+    .pdf-button:hover {
+        transform: scale(1.05);
+        /* Scale up the button on hover */
+    }
 
-.checklist {
-    padding-left: 10px;
-    overflow-y: auto;
-    height: calc(100vh - 70px);
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
+    .pdf-viewer iframe {
+        width: 100%;
+        height: calc(100% - 5px);
+    }
 
-.checklist::-webkit-scrollbar {
-    display: none;
-}
+    .checklist {
+        padding-left: 10px;
+        overflow-y: auto;
+        height: calc(100vh - 70px);
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
 
-.checklist label {
-    display: block;
-    margin-bottom: 5px;
-}
+    .checklist::-webkit-scrollbar {
+        display: none;
+    }
 
-.checkbox-custom {
-    display: none;
-}
+    .checklist label {
+        display: block;
+        margin-bottom: 5px;
+    }
 
-.checkbox-custom:checked + .pdf-button {
-    background-color: #007bff;
-    color: white;
-}
+    .checkbox-custom {
+        display: none;
+    }
 
-.checkbox-custom:checked + .pdf-button::after {
-    opacity: 1;
+    .checkbox-custom:checked+.pdf-button {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .checkbox-custom:checked+.pdf-button::after {
+        opacity: 1;
+    }
+
 }
