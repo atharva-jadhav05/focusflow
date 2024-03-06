@@ -40,7 +40,7 @@ const Dashboard = () => {
     };
 
     const addCardDataToList = (cardName, folderId) => {
-        setCardData(prevList => [...prevList, {name: cardName, id: folderId}]);
+        setCardData(prevList => [...prevList, { name: cardName, id: folderId }]);
     }
 
     const cardNameExists = (name, container) => {
@@ -56,7 +56,7 @@ const Dashboard = () => {
 
         if (cardName.trim() !== '' && !cardNameExists(cardName, cards)) {
             try {
-                
+
                 const apiUrl = 'https://www.googleapis.com/drive/v3/files';
                 const folderName = cardName;
                 const focusFlowId = mainFolderId;
@@ -105,7 +105,7 @@ const Dashboard = () => {
             );
 
             setCards([...cards, newCard]);
-            
+
 
             const newWorkspaceOption = (
                 <a href="#" key={cardName} onClick={() => showConfirmationPopup(newCard)}>
@@ -129,39 +129,39 @@ const Dashboard = () => {
     const deleteCard = async (card) => {
         try {
 
-        console.log(cardData);
-        console.log(card);
-        const cardToDelete = cardData.find((c) => c.name === card.key);
-        console.log(cardToDelete);
+            console.log(cardData);
+            console.log(card);
+            const cardToDelete = cardData.find((c) => c.name === card.key);
+            console.log(cardToDelete);
 
-        if (!cardToDelete) {
-        console.error('Folder not found in the list:', card.name);
-        return;
+            if (!cardToDelete) {
+                console.error('Folder not found in the list:', card.name);
+                return;
+            }
+
+
+            const apiUrl = `https://www.googleapis.com/drive/v3/files/${cardToDelete.id}`;
+
+            // Make a DELETE request to delete the folder from Google Drive
+            await axios.delete(apiUrl, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            // If the folder was successfully deleted from Google Drive, update the state
+            const updatedCards = cards.filter((c) => c.key !== card.key);
+            const updatedCardData = cardData.filter((c) => c.name !== card.key);
+            const updatedWorkspaceOptions = workspaceOptions.slice(0, -1);
+
+            setCards(updatedCards);
+            setCardData(updatedCardData);
+            setWorkspaceOptions(updatedWorkspaceOptions);
+
+        } catch (error) {
+            console.error('Error deleting folder:', error);
+            // Handle the error as needed
         }
-        
-        
-        const apiUrl = `https://www.googleapis.com/drive/v3/files/${cardToDelete.id}`;
-
-        // Make a DELETE request to delete the folder from Google Drive
-        await axios.delete(apiUrl, {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-    
-        // If the folder was successfully deleted from Google Drive, update the state
-        const updatedCards = cards.filter((c) => c.key !== card.key);
-        const updatedCardData = cardData.filter((c) => c.name !== card.key);
-        const updatedWorkspaceOptions = workspaceOptions.slice(0, -1);
-
-        setCards(updatedCards);
-        setCardData(updatedCardData);
-        setWorkspaceOptions(updatedWorkspaceOptions);
-
-      } catch (error) {
-        console.error('Error deleting folder:', error);
-        // Handle the error as needed
-      }
     };
 
     const showContextMenu = (event, card) => {
@@ -192,7 +192,7 @@ const Dashboard = () => {
         setSelectedCardToDelete(null);
     };
 
-    
+
 
     const checkAndCreateFolder = async (folder_name) => {
         try {
@@ -238,6 +238,28 @@ const Dashboard = () => {
     };
 
 
+    const getDriveFolders = async () => {
+        try {
+            const focusFlowId = mainFolderId;
+            const apiUrl = 'https://www.googleapis.com/drive/v3/files';
+            const response = await axios.get(apiUrl, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                params: {
+                    q: `'${focusFlowId}' in parents and mimeType='application/vnd.google-apps.folder'`,
+                },
+            });
+
+            const folders = response.data.files;
+            console.log(response);
+            console.log('Folders within the specified folder:', folders);
+        } catch (error) {
+            console.error('Error fetching folders:', error);
+          }
+    };
+
+
     useEffect(() => {
         console.log(user)
 
@@ -259,6 +281,9 @@ const Dashboard = () => {
 
         // Call the function to check and create the folder when the component mounts
         checkAndCreateFolder('FocusFlow');
+        getDriveFolders();
+
+
     },
         [user]
     );
