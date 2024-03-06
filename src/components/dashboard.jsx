@@ -284,6 +284,9 @@ const Dashboard = () => {
 
                 }
               });
+
+              console.log(cards);
+              
         } catch (error) {
             console.error('Error fetching folders:', error);
           }
