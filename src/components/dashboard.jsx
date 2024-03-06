@@ -1,6 +1,6 @@
 // import { gapi } from "gapi-script";
 import React, { useEffect, useState } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 import './dashboard.css';
@@ -9,6 +9,7 @@ import LogoSvg from './logosvg';
 
 
 const Dashboard = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const { state } = location;
     const [profile, setProfile] = useState([]);
@@ -30,6 +31,10 @@ const Dashboard = () => {
     const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
     const [isContextMenuVisible, setContextMenuVisible] = useState(false);
 
+
+    const goToWorkspace = (name, id) => {
+        navigate(`/workspace/${name}`, {state: { name, id, accessToken }});
+    }
 
     const showCustomBlock = () => {
         setCustomBlockVisible(true);
@@ -99,7 +104,12 @@ const Dashboard = () => {
 
 
             const newCard = (
-                <div className="card" key={cardName} onContextMenu={(e) => showContextMenu(e, newCard)}>
+                <div 
+                    className="card" 
+                    key={cardName} 
+                    onContextMenu={(e) => showContextMenu(e, newCard)}
+                    onDoubleClick={() => goToWorkspace(folder.name, folder.id)}
+                >
                     <div className="card-img"></div>
                     <div className="card-footer">{cardName}</div>
                 </div>
@@ -163,7 +173,7 @@ const Dashboard = () => {
         alert('Returning to Login Page');
     };
 
-    
+
     const showContextMenu = (event, card) => {
         event.preventDefault();
         setContextMenuPosition({ x: event.clientX, y: event.clientY });
@@ -183,16 +193,12 @@ const Dashboard = () => {
     const showConfirmationPopup = (card) => {
         setConfirmationPopupVisible(true);
         hideContextMenu();
-
-        // setSelectedCardToDelete(card);
     };
 
     const hideConfirmationPopup = () => {
         setConfirmationPopupVisible(false);
         setSelectedCardToDelete(null);
     };
-
-
 
     const checkAndCreateFolder = async (folder_name) => {
         try {
@@ -213,9 +219,7 @@ const Dashboard = () => {
             if (checkResponse.data.files.length > 0) {
                 console.log('Folder already exists:', checkResponse.data.files[0]);
                 setMainFolderId(checkResponse.data.files[0].id);
-                
-                // console.log('id of parent folder: ', mainFolderId);
-                // console.log('id of parent folder: ', checkResponse.data.files[0].id);
+
             } else {
                 // If the folder doesn't exist, create it
                 const createResponse = await axios.post(apiUrl, {
@@ -230,14 +234,11 @@ const Dashboard = () => {
 
                 console.log('Folder created successfully:', createResponse.data);
                 setMainFolderId(createResponse.data.id);
-                // console.log('id of parent folder: ', mainFolderId);
-                // console.log('id of parent folder: ', createResponse.data.id);
             }
         } catch (error) {
             console.error('Error checking or creating folder:', error);
         }
     };
-
 
     const getDriveFolders = async (parentFolderId) => {
         try {
@@ -257,15 +258,19 @@ const Dashboard = () => {
 
             folders.forEach((folder) => {
                 if (folder.name.trim() !== '' && !cardNameExists(folder.name, cards)) {
-                    
+
                     console.log(folder);
                     addCardDataToList(folder.name, folder.id);
 
                     const newCard = (
-                        <div className="card" key={folder.name} onContextMenu={(e) => showContextMenu(e, newCard)}>
+                        <div 
+                            className="card" 
+                            key={folder.name} 
+                            onContextMenu={(e) => showContextMenu(e, newCard)}
+                            onDoubleClick={() => goToWorkspace(folder.name, folder.id)}
+                        >
                             <div className="card-img"></div>
                             <div className="card-footer">{folder.name}</div>
-                            {console.log('made card of name ', folder.name)}
                         </div>
                     );
 
@@ -276,17 +281,15 @@ const Dashboard = () => {
                             {folder.name}
                         </a>
                     );
-        
+
                     setWorkspaceOptions([...workspaceOptions, newWorkspaceOption]);
 
                 }
-              });
-
-              console.log(cards);
+            });
 
         } catch (error) {
             console.error('Error fetching folders:', error);
-          }
+        }
     };
 
 
