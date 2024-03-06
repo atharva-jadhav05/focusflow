@@ -19,6 +19,7 @@ const Dashboard = () => {
 
     // to store data of cards
     const [cards, setCards] = useState([]);
+    const [cardData, setCardData] = useState([]);
 
     const [cardName, setCardName] = useState('');
     const [isCustomBlockVisible, setCustomBlockVisible] = useState(false);
@@ -39,7 +40,7 @@ const Dashboard = () => {
     };
 
     const addCardDataToList = (cardName, folderId) => {
-        setCards(prevList => [...prevList, {name: cardName, id: folderId}]);
+        setCardData(prevList => [...prevList, {name: cardName, id: folderId}]);
     }
 
     const cardNameExists = (name, container) => {
@@ -74,6 +75,7 @@ const Dashboard = () => {
 
                 if (checkResponse.data.files.length > 0) {
                     console.log('Folder already exists:', checkResponse.data.files[0]);
+                    addCardDataToList(checkResponse.data.files[0].name, checkResponse.data.files[0].id);
                 } else {
                     // If the folder doesn't exist, create it
                     const createResponse = await axios.post(apiUrl, {
@@ -88,6 +90,7 @@ const Dashboard = () => {
                     });
 
                     console.log('Workspace created successfully:', createResponse.data);
+                    addCardDataToList(createResponse.name, createResponse.id);
                 }
             } catch (error) {
                 console.error('Error checking or creating workspace:', error);
@@ -102,6 +105,7 @@ const Dashboard = () => {
             );
 
             setCards([...cards, newCard]);
+            
 
             const newWorkspaceOption = (
                 <a href="#" key={cardName} onClick={() => showConfirmationPopup(newCard)}>
@@ -125,9 +129,10 @@ const Dashboard = () => {
     const deleteCard = async (card) => {
         try {
 
-        console.log(cards);
+        console.log(cardData);
         console.log(card);
-        const cardToDelete = cards.find((c) => c.name === card.key);
+        const cardToDelete = cardData.find((c) => c.name === card.key);
+        console.log(cardToDelete);
 
         if (!cardToDelete) {
         console.error('Folder not found in the list:', card.name);
@@ -145,10 +150,12 @@ const Dashboard = () => {
         });
     
         // If the folder was successfully deleted from Google Drive, update the state
-        const updatedCards = cards.filter((c) => c.name !== card.name);
+        const updatedCards = cards.filter((c) => c.key !== card.key);
+        const updatedCardData = cardData.filter((c) => c.name !=== card.key);
         const updatedWorkspaceOptions = workspaceOptions.slice(0, -1);
 
         setCards(updatedCards);
+        setCardData(updatedCardData);
         setWorkspaceOptions(updatedWorkspaceOptions);
 
       } catch (error) {
