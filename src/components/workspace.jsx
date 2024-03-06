@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useLocation } from 'react-router-dom';
 
 import './workspace.css';
@@ -15,6 +15,7 @@ const Workspace = () => {
     const accessToken = state?.accessToken || null;
 
     const [files, setFiles] = useState([]);
+    const iframeRef = useRef();
 
     const getFilesFromDrive = async () => {
         const apiUrl = 'https://www.googleapis.com/drive/v3/files';
@@ -49,15 +50,15 @@ const Workspace = () => {
                 console.log(pdfUrl);
 
 
-                const iframe = document.createElement('iframe');
-                iframe.src = pdfUrl;
-                iframe.style.width = '100%';
-                iframe.style.height = '100%';
-                iframe.style.border = 'none';
+                // const iframe = document.createElement('iframe');
+                iframeRef.current.src = pdfUrl;
+                // iframe.style.width = '100%';
+                // iframe.style.height = '100%';
+                // iframe.style.border = 'none';
 
-                const pdfContainer = document.getElementById('pdf-viewer');
-                pdfContainer.innerHTML = ''; // Clear existing content
-                pdfContainer.appendChild(iframe);
+                // const pdfContainer = document.getElementById('pdf-viewer');
+                // pdfContainer.innerHTML = ''; // Clear existing content
+                // pdfContainer.appendChild(iframe);
             })
             .catch(error => {
                 console.error('Error fetching PDF:', error);
@@ -115,7 +116,7 @@ const Workspace = () => {
 
                 {/* <!-- Middle section for PDF viewer --> */}
                 <div class="pdf-viewer">
-                    <iframe id="pdfFrame" src="" frameborder="0"></iframe>
+                    <iframe ref={iframeRef} id="pdfFrame" title="PDF Viewer" width="100%" height="600" frameborder="0"></iframe>
                 </div>
                 {/* <!-- Right section for checklist --> */}
                 <div class="checklist">
