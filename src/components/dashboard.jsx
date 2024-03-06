@@ -122,7 +122,7 @@ const Dashboard = () => {
         alert('Returning to Login Page');
     };
 
-    const deleteCard = (card) => {
+    const deleteCard = async (card) => {
         try {
         const cardToDelete = cards.find((c) => c.name === card.name);
 
