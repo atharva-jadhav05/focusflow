@@ -13,10 +13,10 @@ const Workspace = () => {
 
     const [files, setFiles] = useState([]);
 
-    useEffect(() => {
+    const getFilesFromDrive = async () => {
         const apiUrl = 'https://www.googleapis.com/drive/v3/files';
 
-        const response = axios.get(apiUrl, {
+        const response = await axios.get(apiUrl, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -29,7 +29,12 @@ const Workspace = () => {
         // setFiles(pdf_files)
         console.log(response);
 
+    }
+
+    useEffect(() => {
+        getFilesFromDrive();
     });
+        
 
 
 
