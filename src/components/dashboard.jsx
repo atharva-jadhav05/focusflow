@@ -122,11 +122,6 @@ const Dashboard = () => {
         }
     };
 
-    const returnToLoginPage = () => {
-        // Add the functionality to return to the login page here
-        alert('Returning to Login Page');
-    };
-
     const deleteCard = async (card) => {
         try {
 
@@ -165,6 +160,12 @@ const Dashboard = () => {
         }
     };
 
+    const returnToLoginPage = () => {
+        // Add the functionality to return to the login page here
+        alert('Returning to Login Page');
+    };
+
+    
     const showContextMenu = (event, card) => {
         event.preventDefault();
         setContextMenuPosition({ x: event.clientX, y: event.clientY });
@@ -260,8 +261,9 @@ const Dashboard = () => {
             console.log('Folders within the specified folder:', folders);
 
             folders.forEach((folder) => {
-                setCardName(folder.name);
-                addCardFromCustomBlock();
+                console.log(folder);
+                // setCardName(folder.name);
+                // addCardFromCustomBlock();
               });
       
 
