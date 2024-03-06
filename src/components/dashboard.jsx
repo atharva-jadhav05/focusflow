@@ -33,6 +33,7 @@ const Dashboard = () => {
 
 
     const goToWorkspace = (name, id) => {
+        console.log('double clicked on ', name);
         navigate(`/workspace/${name}`, {state: { name, id, accessToken }});
     }
 
