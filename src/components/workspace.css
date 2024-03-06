@@ -80,3 +80,108 @@
 .navbar .dropdown:hover .dropdown-content {
     display: flex;
 }
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding: 70px 20px 20px;
+    height: calc(100vh - 70px);
+}
+
+.playlist,
+.pdf-viewer,
+.checklist {
+    width: 30%;
+    height: 100%;
+}
+
+.pdf-viewer {
+    width: 70%;
+    padding-bottom: 5px;
+    position: relative;
+}
+
+.pdf-button-container {
+    overflow-y: auto;
+    height: 100%;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.pdf-button-container::-webkit-scrollbar {
+    display: none;
+}
+
+.pdf-button {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 5px;
+    text-align: left;
+    background-color: #1A1A2E;
+    color: #FFFBEB;
+    border: 1px solid #555;
+    border-radius: 5px;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s ease; /* Smooth transition for hover animation */
+}
+
+.pdf-button::after {
+    content: "\2713";
+    font-size: 14px;
+    color: #fff;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+}
+
+.pdf-button.checked {
+    background-color: #007bff;
+    color: white;
+}
+
+.pdf-button.checked::after {
+    opacity: 1;
+}
+
+.pdf-button:hover {
+    transform: scale(1.05); /* Scale up the button on hover */
+}
+
+.pdf-viewer iframe {
+    width: 100%;
+    height: calc(100% - 5px);
+}
+
+.checklist {
+    padding-left: 10px;
+    overflow-y: auto;
+    height: calc(100vh - 70px);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.checklist::-webkit-scrollbar {
+    display: none;
+}
+
+.checklist label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.checkbox-custom {
+    display: none;
+}
+
+.checkbox-custom:checked + .pdf-button {
+    background-color: #007bff;
+    color: white;
+}
+
+.checkbox-custom:checked + .pdf-button::after {
+    opacity: 1;
+}

@@ -34,11 +34,36 @@ const Workspace = () => {
 
     }
 
+    const displayPDF = (file) => {
+
+        const url = `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`;
+        const headers = {
+            Authorization: `Bearer ${accessToken}`,
+        };
+        axios.get(url, { headers, responseType: 'blob' })
+            .then(response => {
+                const pdfBlob = response.data;
+                const pdfUrl = URL.createObjectURL(pdfBlob);
+
+                const iframe = document.createElement('iframe');
+                iframe.src = pdfUrl;
+                iframe.style.width = '100%';
+                iframe.style.height = '100%';
+                iframe.style.border = 'none';
+
+                const pdfContainer = document.getElementById('pdfContainer');
+                pdfContainer.innerHTML = ''; // Clear existing content
+                pdfContainer.appendChild(iframe);
+            })
+            .catch(error => {
+                console.error('Error fetching PDF:', error);
+            });
+    }
 
 
     useEffect(() => {
         getFilesFromDrive();
-    });
+    }, []);
 
 
 
@@ -48,22 +73,52 @@ const Workspace = () => {
             {/* <!-- Navbar --> */}
             <div class="navbar">
                 <div class="logo">
-                    <LogoSvg/>
+                    <LogoSvg />
                 </div>
                 <ul class="menu">
-                    <li><a href="#">Home</a></li>
+                    <li><a href="https://focusflow-eight.vercel.app/dashboard">Home</a></li>
                     <li class="dropdown">
                         <a href="#">Bookmarks &#9662;</a>
                         <div class="dropdown-content">
                             <input type="text" placeholder="Type bookmark name"></input>
-                                <button id="addBookmarkBtn">Add</button>
-                                <div id="bookmarksList"></div>
+                            <button id="addBookmarkBtn">Add</button>
+                            <div id="bookmarksList"></div>
                         </div>
                     </li>
                     <li><a href="#">Highlighter</a></li>
                     <li><a href="#" id="importButton">Import</a></li>
                 </ul>
             </div>
+
+            {/* <!-- Main content --> */}
+            <div class="container">
+                {/* <!-- Left section for playlist --> */}
+                <div class="playlist">
+                    <div class="pdf-button-container" id="pdfList">
+                        {/* <!-- PDF buttons will be dynamically added here --> */}
+                        {files.map((file) => (
+                            <button
+                                key={file.id}
+                                className="pdf-button"
+                                onClick={() => displayPDF(file)}
+                            >
+                                {file.name}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {/* <!-- Middle section for PDF viewer --> */}
+                <div class="pdf-viewer">
+                    <iframe id="pdfFrame" src="" frameborder="0"></iframe>
+                </div>
+                {/* <!-- Right section for checklist --> */}
+                <div class="checklist">
+                    {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
+                </div>
+            </div>
+
+
 
             {console.log(folderId, ' ', accessToken, ' ', folderName)}
         </>
