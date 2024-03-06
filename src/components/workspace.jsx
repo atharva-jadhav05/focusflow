@@ -48,37 +48,11 @@ const Workspace = () => {
         };
         axios.get(url, { headers, responseType: 'blob' })
             .then(response => {
-                const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+                const pdfBlob = new Blob([response.data], {type: 'application/pdf'});
                 const pdfUrl = URL.createObjectURL(pdfBlob);
-
-                const iframe = iframeRef.current;
-                iframe.onload = () => {
-
-                    // Now that the iframe has loaded, you can use pdf.js functions if needed
-                    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-                    const script = iframeDocument.createElement('script');
-                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js';
-                    script.onload = function () {
-                        // pdf.js is loaded, set the PDF URL as the source for the iframe
-                        iframe.src = pdfUrl;
-                    };
-
-                    // Append the script element to the iframe document
-                    iframeDocument.head.appendChild(script);
-                };
-
-                // Access the contentWindow and PDF.js objects
-                const pdfWindow = iframe.contentWindow;
-                const pdfDocument = pdfWindow.PDFViewerApplication.pdfDocument;
-
-                // Listen for page changes
-                pdfDocument.addEventListener('pagechange', (event) => {
-                    setCurrentPage(event.pageNumber);
-                    console.log('Current Page:', event.pageNumber);
-                });
-
-                // iframeRef.current.src = pdfUrl;
-
+                
+                iframeRef.current.src = pdfUrl;
+                
             })
             .catch(error => {
                 console.error('Error fetching PDF:', error);
@@ -88,7 +62,7 @@ const Workspace = () => {
     const addBookmark = () => {
         setBookmarks([...bookmarks, currentPage]);
         console.log(currentPage);
-    };
+      };
 
 
     useEffect(() => {
@@ -99,67 +73,67 @@ const Workspace = () => {
 
     return (
         <>
-            <div className="workspace">
-                {/* <!-- Navbar --> */}
-                <div class="navbar">
-                    <div class="logo">
-                        <LogoSvg />
-                    </div>
-                    <ul class="menu">
-                        <li><a href="#" onClick={() => navigate(-1)}>Home</a></li>
-                        <li class="dropdown">
-                            <a href="#" onClick={() => addBookmark()}>Bookmark current page &#9662;</a>
-                            {/* <div class="dropdown-content">
+        <div className="workspace">
+            {/* <!-- Navbar --> */}
+            <div class="navbar">
+                <div class="logo">
+                    <LogoSvg />
+                </div>
+                <ul class="menu">
+                    <li><a href="#" onClick={() => navigate(-1)}>Home</a></li>
+                    <li class="dropdown">
+                        <a href="#" onClick={() => addBookmark()}>Bookmark current page &#9662;</a>
+                        {/* <div class="dropdown-content">
                             <input type="text" placeholder="Type bookmark name"></input>
                             <button id="addBookmarkBtn">Add</button>
                             <div id="bookmarksList"></div>
                         </div> */}
-                        </li>
-                        <li><a href="#">Highlighter</a></li>
-                        <li><a href="#" id="importButton">Import</a></li>
-                    </ul>
+                    </li>
+                    <li><a href="#">Highlighter</a></li>
+                    <li><a href="#" id="importButton">Import</a></li>
+                </ul>
+            </div>
+
+            {/* <!-- Main content --> */}
+            <div class="container">
+                {/* <!-- Left section for playlist --> */}
+                <div class="playlist">
+                    <div class="pdf-button-container" id="pdfList">
+                        {/* <!-- PDF buttons will be dynamically added here --> */}
+                        {files.map((file) => (
+                            <button
+                                key={file.id}
+                                className="pdf-button"
+                                onClick={() => displayPDF(file)}
+                            >
+                                {file.name}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
-                {/* <!-- Main content --> */}
-                <div class="container">
-                    {/* <!-- Left section for playlist --> */}
-                    <div class="playlist">
-                        <div class="pdf-button-container" id="pdfList">
-                            {/* <!-- PDF buttons will be dynamically added here --> */}
-                            {files.map((file) => (
-                                <button
-                                    key={file.id}
-                                    className="pdf-button"
-                                    onClick={() => displayPDF(file)}
-                                >
-                                    {file.name}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* <!-- Middle section for PDF viewer --> */}
-                    <div class="pdf-viewer">
-                        <iframe
-                            ref={iframeRef}
-                            id="pdfFrame"
-                            title="PDF Viewer"
-                            width="100%"
-                            height="600"
-                            frameborder="0"
+                {/* <!-- Middle section for PDF viewer --> */}
+                <div class="pdf-viewer">
+                    <iframe 
+                        ref={iframeRef} 
+                        id="pdfFrame" 
+                        title="PDF Viewer" 
+                        width="100%" 
+                        height="600" 
+                        frameborder="0"
                         ></iframe>
-                    </div>
-                    {/* <!-- Right section for checklist --> */}
-                    <div class="checklist">
-                        <h3 style={{ color: "white" }}>Bookmarks</h3>
-                        {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
-
-                    </div>
                 </div>
+                {/* <!-- Right section for checklist --> */}
+                <div class="checklist">
+                    <h3 style={{color:"white"}}>Bookmarks</h3>
+                    {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
+
+                </div>
+            </div>
 
 
 
-                {console.log(folderId, ' ', accessToken, ' ', folderName)}
+            {console.log(folderId, ' ', accessToken, ' ', folderName)}
             </div>
         </>
     )
