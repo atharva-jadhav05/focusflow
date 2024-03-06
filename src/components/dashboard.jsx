@@ -20,6 +20,7 @@ const Dashboard = () => {
     // to store data of cards
     const [cards, setCards] = useState([]);
     const [cardData, setCardData] = useState([]);
+    const [driveFolders, setDriveFolders] = useState([]);
 
     const [cardName, setCardName] = useState('');
     const [isCustomBlockVisible, setCustomBlockVisible] = useState(false);
@@ -256,8 +257,15 @@ const Dashboard = () => {
             });
 
             const folders = response.data.files;
-            console.log(response);
             console.log('Folders within the specified folder:', folders);
+
+            folders.forEach((folder) => {
+                setCardName(folder.name);
+                addCardFromCustomBlock();
+              });
+      
+
+            
         } catch (error) {
             console.error('Error fetching folders:', error);
           }
