@@ -268,6 +268,7 @@ const Dashboard = () => {
                         <div className="card" key={folder.name} onContextMenu={(e) => showContextMenu(e, newCard)}>
                             <div className="card-img"></div>
                             <div className="card-footer">{folder.name}</div>
+                            {console.log('made card of name ', folder.name);}
                         </div>
                     );
 
