@@ -17,6 +17,10 @@ const Workspace = () => {
     const [files, setFiles] = useState([]);
     const iframeRef = useRef();
 
+
+    const [bookmarks, setBookmarks] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+
     const getFilesFromDrive = async () => {
         const apiUrl = 'https://www.googleapis.com/drive/v3/files';
 
@@ -65,6 +69,11 @@ const Workspace = () => {
             });
     }
 
+    const addBookmark = () => {
+        setBookmarks([...bookmarks, currentPage]);
+        console.log(currentPage);
+      };
+
 
     useEffect(() => {
         getFilesFromDrive();
@@ -84,12 +93,12 @@ const Workspace = () => {
                 <ul class="menu">
                     <li><a href="https://focusflow-eight.vercel.app/dashboard">Home</a></li>
                     <li class="dropdown">
-                        <a href="#">Bookmarks &#9662;</a>
-                        <div class="dropdown-content">
+                        <a href="#" onClick={() => addBookmark()}>Bookmark current page &#9662;</a>
+                        {/* <div class="dropdown-content">
                             <input type="text" placeholder="Type bookmark name"></input>
                             <button id="addBookmarkBtn">Add</button>
                             <div id="bookmarksList"></div>
-                        </div>
+                        </div> */}
                     </li>
                     <li><a href="#">Highlighter</a></li>
                     <li><a href="#" id="importButton">Import</a></li>
@@ -116,11 +125,29 @@ const Workspace = () => {
 
                 {/* <!-- Middle section for PDF viewer --> */}
                 <div class="pdf-viewer">
-                    <iframe ref={iframeRef} id="pdfFrame" title="PDF Viewer" width="100%" height="600" frameborder="0"></iframe>
+                    <iframe 
+                        ref={iframeRef} 
+                        id="pdfFrame" 
+                        title="PDF Viewer" 
+                        width="100%" 
+                        height="600" 
+                        frameborder="0"
+                        onLoad={() => {
+                            // Access the contentWindow property of the iframe to get the PDF.js viewer object
+                            const pdfViewer = iframeRef.current.contentWindow.PDFViewerApplication;
+                            
+                            // Listen for page changes
+                            pdfViewer.eventBus.on('pagerendered', (event) => {
+                              setCurrentPage(event.pageNumber);
+                            });
+                          }}
+                        ></iframe>
                 </div>
                 {/* <!-- Right section for checklist --> */}
                 <div class="checklist">
+                    <h3 style={{color:"white"}}>Bookmarks</h3>
                     {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
+
                 </div>
             </div>
 
