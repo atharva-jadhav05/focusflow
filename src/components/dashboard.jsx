@@ -258,10 +258,34 @@ const Dashboard = () => {
             });
 
             const folders = response.data.files;
-            console.log('Folders within the specified folder:', folders);
+            // console.log('Folders within the specified folder:', folders);
 
             folders.forEach((folder) => {
                 console.log(folder);
+                if (folder.name.trim() !== '' && !cardNameExists(folder.name, cards)) {
+                    
+                    addCardDataToList(folder.name, folder.id);
+
+                    const newCard = (
+                        <div className="card" key={folder.name} onContextMenu={(e) => showContextMenu(e, newCard)}>
+                            <div className="card-img"></div>
+                            <div className="card-footer">{folder.name}</div>
+                        </div>
+                    );
+
+                    setCards([...cards, newCard]);
+                    const newWorkspaceOption = (
+                        <a href="#" key={cardName} onClick={() => showConfirmationPopup(newCard)}>
+                            {cardName}
+                        </a>
+                    );
+        
+                    setWorkspaceOptions([...workspaceOptions, newWorkspaceOption]);
+        
+                    hideCustomBlock();
+
+
+                }
                 // setCardName(folder.name);
                 // addCardFromCustomBlock();
               });
