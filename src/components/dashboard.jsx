@@ -59,6 +59,15 @@ const Dashboard = () => {
         return false;
     };
 
+    const getCardId = (name, container) => {
+        for (const existingCard of container) {
+            if (existingCard.name === name) {
+                return existingCard.id;
+            }
+        }
+        return null;
+    }
+
     const addCardFromCustomBlock = async () => {
 
         if (cardName.trim() !== '' && !cardNameExists(cardName, cards)) {
@@ -109,7 +118,7 @@ const Dashboard = () => {
                     className="card" 
                     key={cardName} 
                     onContextMenu={(e) => showContextMenu(e, newCard)}
-                    onDoubleClick={() => goToWorkspace(folder.name, folder.id)}
+                    onDoubleClick={() => goToWorkspace(cardName, getCardId(cardName, cardData))}
                 >
                     <div className="card-img"></div>
                     <div className="card-footer">{cardName}</div>
