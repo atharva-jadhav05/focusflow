@@ -65,20 +65,19 @@ const Workspace = () => {
 
                     // Append the script element to the iframe document
                     iframeDocument.head.appendChild(script);
-
-                    // Access the contentWindow and PDF.js objects
-                    const pdfWindow = iframe.contentWindow;
-                    const pdfDocument = pdfWindow.PDFViewerApplication.pdfDocument;
-
-                    // Listen for page changes
-                    pdfDocument.addEventListener('pagechange', (event) => {
-                        setCurrentPage(event.pageNumber);
-                        console.log('Current Page:', event.pageNumber);
-                    });
                 };
 
+                // Access the contentWindow and PDF.js objects
+                const pdfWindow = iframe.contentWindow;
+                const pdfDocument = pdfWindow.PDFViewerApplication.pdfDocument;
 
-                iframeRef.current.src = pdfUrl;
+                // Listen for page changes
+                pdfDocument.addEventListener('pagechange', (event) => {
+                    setCurrentPage(event.pageNumber);
+                    console.log('Current Page:', event.pageNumber);
+                });
+
+                // iframeRef.current.src = pdfUrl;
 
             })
             .catch(error => {
