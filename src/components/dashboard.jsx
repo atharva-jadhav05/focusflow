@@ -15,6 +15,7 @@ const Dashboard = () => {
     const [mainFolderId, setMainFolderId] = useState(null);
 
     const user = state?.user || null;
+    const accessToken = user.access_token;
 
     // to store data of cards
     const [cards, setCards] = useState([]);
@@ -54,7 +55,7 @@ const Dashboard = () => {
 
         if (cardName.trim() !== '' && !cardNameExists(cardName, cards)) {
             try {
-                const accessToken = user.access_token;
+                
                 const apiUrl = 'https://www.googleapis.com/drive/v3/files';
                 const folderName = cardName;
                 const focusFlowId = mainFolderId;
@@ -122,11 +123,35 @@ const Dashboard = () => {
     };
 
     const deleteCard = (card) => {
-        const updatedCards = cards.filter((c) => c.key !== card.key);
+        try {
+        const cardToDelete = cards.find((c) => c.name === card.name);
+
+        if (!cardToDelete) {
+        console.error('Folder not found in the list:', card.name);
+        return;
+        }
+        
+        
+        const apiUrl = `https://www.googleapis.com/drive/v3/files/${cardToDelete.id}`;
+
+        // Make a DELETE request to delete the folder from Google Drive
+        await axios.delete(apiUrl, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+    
+        // If the folder was successfully deleted from Google Drive, update the state
+        const updatedCards = cards.filter((c) => c.name !== card.name);
         const updatedWorkspaceOptions = workspaceOptions.slice(0, -1);
 
         setCards(updatedCards);
         setWorkspaceOptions(updatedWorkspaceOptions);
+
+      } catch (error) {
+        console.error('Error deleting folder:', error);
+        // Handle the error as needed
+      }
     };
 
     const showContextMenu = (event, card) => {
