@@ -121,7 +121,7 @@ const Workspace = () => {
 
         setBookmarks([...bookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url }]);
         setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url  }]);
-        console.log(currentFileId, bookmark_name.current.value, bookmark_page.current.value);
+        console.log(currentFileId, bookmark_name.current.value, bookmark_page.current.value, url);
         bookmark_name.current.value = '';
         bookmark_page.current.value = '';
 
