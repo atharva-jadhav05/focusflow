@@ -45,6 +45,8 @@ const Workspace = () => {
 
     const displayPDF = (file) => {
 
+        setToShowBookmarks([]);
+
         const url = `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`;
         const headers = {
             Authorization: `Bearer ${accessToken}`,
