@@ -114,8 +114,13 @@ const Workspace = () => {
     };
 
     const addBookmark = () => {
-        setBookmarks([...bookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value }]);
-        setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value }]);
+        const currentUrl = iframeRef.current.src;
+        const basePdfUrl = currentUrl.split('#')[0];
+
+        const url = `${basePdfUrl}#page=${bookmark.page}`;
+
+        setBookmarks([...bookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url }]);
+        setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url  }]);
         console.log(currentFileId, bookmark_name.current.value, bookmark_page.current.value);
         bookmark_name.current.value = '';
         bookmark_page.current.value = '';
@@ -192,10 +197,11 @@ const Workspace = () => {
 
 
     const handleBookmarkClick = (bookmark) => {
-        const currentUrl = iframeRef.current.src;
-        const basePdfUrl = currentUrl.split('#')[0];
+        // const currentUrl = iframeRef.current.src;
+        // const basePdfUrl = currentUrl.split('#')[0];
 
-        iframeRef.current.src = `${basePdfUrl}#page=${bookmark.page}`;
+        // iframeRef.current.src = `${basePdfUrl}#page=${bookmark.page}`;
+        iframeRef.current.src = bookmark.url;
         iframeRef.current.contentWindow.location.reload(true);
 
     }
