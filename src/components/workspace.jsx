@@ -137,11 +137,7 @@ const Workspace = () => {
         const files = listFilesResponse.data.files;
 
         try {
-            // If the file doesn't exist, create it
-            if (files.length === 0) {
-                await createBookmarksFile(fileName);
-            }
-
+            
             // Get the existing or newly created file ID
             const fileId = files.length > 0 ? files[0].id : await createBookmarksFile(fileName);
 
