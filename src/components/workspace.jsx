@@ -117,7 +117,7 @@ const Workspace = () => {
         const currentUrl = iframeRef.current.src;
         const basePdfUrl = currentUrl.split('#')[0];
 
-        const url = `${basePdfUrl}#page=${bookmark.page}`;
+        const url = `${basePdfUrl}#page=${bookmark_page.current.value}`;
 
         setBookmarks([...bookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url }]);
         setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url  }]);
