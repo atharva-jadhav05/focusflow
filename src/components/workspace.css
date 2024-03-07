@@ -189,6 +189,10 @@
         display: none;
     }
 
+    .checklist.button {
+        width: 80%;
+    }
+
     .checklist label {
         display: block;
         margin-bottom: 5px;
