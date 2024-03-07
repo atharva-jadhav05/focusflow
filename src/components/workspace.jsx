@@ -23,7 +23,6 @@ const Workspace = () => {
 
 
     const [bookmarks, setBookmarks] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
     const [toShowBookmarks, setToShowBookmarks] = useState([]);
 
     const getFilesFromDrive = async () => {
@@ -100,7 +99,7 @@ const Workspace = () => {
                 console.log('Bookmarks loaded from Drive:', currentFileBookmarks);
             } else {
                 // File doesn't exist, clear bookmarks
-                setBookmarks({});
+                setBookmarks([]);
                 console.log('No bookmarks found for this PDF.');
             }
         } catch (error) {
