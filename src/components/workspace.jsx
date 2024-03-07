@@ -23,6 +23,7 @@ const Workspace = () => {
 
     const [bookmarks, setBookmarks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [iframeKey, setIframeKey] = useState(0);
 
     const getFilesFromDrive = async () => {
         const apiUrl = 'https://www.googleapis.com/drive/v3/files';
@@ -71,8 +72,10 @@ const Workspace = () => {
     const handleBookmarkClick = (bookmark) => {
         const currentUrl = iframeRef.current.src;
         const basePdfUrl = currentUrl.split('#')[0];
-
+        
+        setIframeKey(prevKey => prevKey + 1);
         iframeRef.current.src = `${basePdfUrl}#page=${bookmark.page}`;
+        
     }
 
     useEffect(() => {
@@ -128,6 +131,7 @@ const Workspace = () => {
                     {/* <!-- Middle section for PDF viewer --> */}
                     <div class="pdf-viewer">
                         <iframe
+                            key={iframeKey}
                             ref={iframeRef}
                             id="pdfFrame"
                             title="PDF Viewer"
