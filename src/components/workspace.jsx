@@ -69,7 +69,7 @@ const Workspace = () => {
 
     const fetchBookmarks = async (fileId) => {
         const fileName = 'bookmarks.json';
-    
+
         try {
             // Check if the bookmarks file exists in the specified folder
             const listFilesUrl = 'https://www.googleapis.com/drive/v3/files';
@@ -81,9 +81,9 @@ const Workspace = () => {
                     q: `name='${fileName}' and '${folderId}' in parents and trashed=false`,
                 },
             });
-    
+
             const files = listFilesResponse.data.files;
-    
+
             if (files.length > 0) {
                 // File exists, fetch and display bookmarks
                 const file_Id = files[0].id;
@@ -93,7 +93,7 @@ const Workspace = () => {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 });
-    
+
                 const bookmarksData = downloadResponse.data || {};
                 const currentFileBookmarks = bookmarksData.filter(bookmark => bookmark.fileId === fileId);
 
@@ -137,7 +137,7 @@ const Workspace = () => {
         const files = listFilesResponse.data.files;
 
         try {
-            
+
             // Get the existing or newly created file ID
             const fileId = files.length > 0 ? files[0].id : await createBookmarksFile(fileName);
 
@@ -201,6 +201,53 @@ const Workspace = () => {
         getFilesFromDrive();
     }, []);
 
+    const [selectedFiles, setSelectedFiles] = useState([]);
+
+    const handleFileChange = (event) => {
+        const input = event.target;
+        const files = input.files;
+
+        // Add all selected files to the selectedFiles array
+        setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
+
+        // Optionally, reset the input to clear the selection
+        input.value = null;
+
+        // Upload files immediately after selection
+        handleUpload();
+    };
+
+    const handleButtonClick = () => {
+        // Trigger click event on the hidden file input
+        document.getElementById('fileInput').click();
+    };
+
+    const handleUpload = async () => {
+        if (selectedFiles.length > 0) {
+            try {
+
+                // Iterate over selected files and upload each one
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    const file = selectedFiles[i];
+                    const url = `https://www.googleapis.com/upload/drive/v3/files?uploadType=media&parents=${folderId}`;
+
+                    const headers = {
+                        Authorization: `Bearer ${accessToken}`,
+                        'Content-Type': file.type,
+                    };
+
+                    const response = await axios.post(url, file, { headers });
+                    console.log('File uploaded successfully:', response.data);
+                }
+
+                // Optionally, clear the selected files after upload
+                setSelectedFiles([]);
+            } catch (error) {
+                console.error('File upload error:', error);
+            }
+        }
+    }
+
 
 
 
@@ -214,6 +261,7 @@ const Workspace = () => {
                     </div>
                     <ul class="menu">
                         <li><a href="#" onClick={() => navigate(-1)}>Home</a></li>
+
                         <li class="dropdown">
                             <a href="#">Bookmark page &#9662;</a>
                             <div class="dropdown-content">
@@ -225,7 +273,16 @@ const Workspace = () => {
                             </div>
                         </li>
                         <li><a href="#">Highlighter</a></li>
-                        <li><a href="#" id="importButton">Import</a></li>
+
+                        <li><a href="#" id="importButton" onClick={handleButtonClick}>Upload</a>
+                            <input
+                                type="file"
+                                accept=".pdf"
+                                onChange={handleFileChange}
+                                multiple
+                                id="fileInput"
+                                style={{ display: 'none' }} // Hide the input element
+                            /></li>
                     </ul>
                 </div>
 
