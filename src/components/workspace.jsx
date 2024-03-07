@@ -212,6 +212,7 @@ const Workspace = () => {
     
     const handleFileUpload = async () => {
         try {
+            console.log(fileList);
           const uploadPromises = fileList.map(async (file) => {
             const formData = new FormData();
             formData.append('file', file);
