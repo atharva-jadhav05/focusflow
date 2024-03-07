@@ -325,7 +325,7 @@ const Workspace = () => {
                         <h3 style={{ color: "white" }}>Bookmarks</h3>
                         {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
                         {toShowBookmarks.map((bookmark, index) => (
-                            <button key={index} onClick={() => handleBookmarkClick(bookmark)} style={{display: 'block', width: '100%', backgroundColor: '#1A1A2E', color: '#FFFBEB'}}>
+                            <button key={index} onClick={() => handleBookmarkClick(bookmark)} style={{display: 'block', width: '100%', backgroundColor: 'rgb(126 126 158)', color: '#FFFBEB', height: '5vh'}}>
                                 {bookmark.name} - Page {bookmark.page}
                             </button>
                         ))}
