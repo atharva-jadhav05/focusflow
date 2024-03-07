@@ -213,25 +213,31 @@ const Workspace = () => {
     const handleFileUpload = async () => {
         try {
             console.log(fileList);
-          const uploadPromises = fileList.map(async (file) => {
-            const formData = new FormData();
-            formData.append('file', file);
+          
+    const uploadPromises = [];
     
-            const response = await axios.post(
-              `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true&parents=${folderId}`,
-              formData,
-              {
-                headers: {
-                  'Content-Type': 'application/pdf',
-                  Authorization: `Bearer ${accessToken}`,
-                },
-              }
-            );
-    
-            console.log('File uploaded:', response.data.name);
-          });
-    
-          await Promise.all(uploadPromises);
+    for (let i = 0; i < fileList.length; i++) {
+      const file = fileList[i];
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await axios.post(
+        `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true&parents=${folderId}`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/pdf',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      console.log('File uploaded:', response.data.name);
+      uploadPromises.push(response);
+    }
+
+    await Promise.all(uploadPromises);
           setFileList([]);
         } catch (error) {
           console.error('Error uploading files to Drive:', error);
