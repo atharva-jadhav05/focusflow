@@ -25,6 +25,9 @@ const Workspace = () => {
     const [bookmarks, setBookmarks] = useState([]);
     const [toShowBookmarks, setToShowBookmarks] = useState([]);
 
+    const [selectedFiles, setSelectedFiles] = useState([]);
+
+
     const getFilesFromDrive = async () => {
         const apiUrl = 'https://www.googleapis.com/drive/v3/files';
 
@@ -201,8 +204,16 @@ const Workspace = () => {
         getFilesFromDrive();
     }, []);
 
-    const [selectedFiles, setSelectedFiles] = useState([]);
+    
 
+
+    useEffect(() => {
+        if (selectedFiles.length > 0) {
+          handleUpload();
+        }
+      }, [selectedFiles]);
+
+    
     const handleFileChange = (event) => {
         const input = event.target;
         const files = input.files;
@@ -214,7 +225,7 @@ const Workspace = () => {
         input.value = null;
 
         // Upload files immediately after selection
-        handleUpload();
+        // handleUpload();
     };
 
     const handleButtonClick = () => {
@@ -327,9 +338,6 @@ const Workspace = () => {
                     </div>
                 </div>
 
-
-
-                {console.log(folderId, ' ', accessToken, ' ', folderName)}
             </div>
         </>
     )
