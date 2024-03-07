@@ -25,7 +25,7 @@ const Workspace = () => {
     const [bookmarks, setBookmarks] = useState([]);
     const [toShowBookmarks, setToShowBookmarks] = useState([]);
 
-    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [fileList, setFileList] = useState([]);
 
 
     const getFilesFromDrive = async () => {
@@ -204,60 +204,41 @@ const Workspace = () => {
         getFilesFromDrive();
     }, []);
 
-    
-
-
     useEffect(() => {
-        if (selectedFiles.length > 0) {
-          handleUpload();
-        }
-      }, [selectedFiles]);
+        handleFileUpload();
+    }, [fileList])
 
     
-    const handleFileChange = (event) => {
-        const input = event.target;
-        const files = input.files;
-
-        // Add all selected files to the selectedFiles array
-        setSelectedFiles((prevFiles) => [...prevFiles, ...files]);
-
-        // Optionally, reset the input to clear the selection
-        input.value = null;
-
-        // Upload files immediately after selection
-        // handleUpload();
-    };
-
-    const handleButtonClick = () => {
-        // Trigger click event on the hidden file input
-        document.getElementById('fileInput').click();
-    };
-
-    const handleUpload = async () => {
-        if (selectedFiles.length > 0) {
-            try {
-
-                // Iterate over selected files and upload each one
-                for (let i = 0; i < selectedFiles.length; i++) {
-                    const file = selectedFiles[i];
-                    const url = `https://www.googleapis.com/upload/drive/v3/files?uploadType=media&parents=${folderId}`;
-
-                    const headers = {
-                        Authorization: `Bearer ${accessToken}`,
-                        'Content-Type': file.type,
-                    };
-
-                    const response = await axios.post(url, file, { headers });
-                    console.log('File uploaded successfully:', response.data);
-                }
-
-                // Optionally, clear the selected files after upload
-                setSelectedFiles([]);
-            } catch (error) {
-                console.error('File upload error:', error);
-            }
+    const handleFileUpload = async () => {
+        try {
+          const uploadPromises = fileList.map(async (file) => {
+            const formData = new FormData();
+            formData.append('file', file);
+    
+            const response = await axios.post(
+              `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true&parents=${folderId}`,
+              formData,
+              {
+                headers: {
+                  'Content-Type': 'application/pdf',
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              }
+            );
+    
+            console.log('File uploaded:', response.data.name);
+          });
+    
+          await Promise.all(uploadPromises);
+        } catch (error) {
+          console.error('Error uploading files to Drive:', error);
         }
-    }
+      };
+    
+
+    const handleFileSelect = (files) => {
+        setFileList(files);
+      };
 
 
 
@@ -289,7 +270,7 @@ const Workspace = () => {
                             <input
                                 type="file"
                                 accept=".pdf"
-                                onChange={handleFileChange}
+                                onChange={(e) => handleFileSelect(e.target.files)}
                                 multiple
                                 id="fileInput"
                                 style={{ display: 'none' }} // Hide the input element
