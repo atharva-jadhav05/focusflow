@@ -45,7 +45,7 @@ const Workspace = () => {
 
     const displayPDF = (file) => {
 
-        setToShowBookmarks([]);
+        // setToShowBookmarks([]);
 
         const url = `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`;
         const headers = {
@@ -59,7 +59,7 @@ const Workspace = () => {
                 iframeRef.current.src = pdfUrl;
                 setCurrentFileId(file.id);
 
-                fetchBookmarks(file.id);
+                // fetchBookmarks(file.id);
 
             })
             .catch(error => {
