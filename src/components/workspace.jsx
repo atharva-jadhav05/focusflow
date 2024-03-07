@@ -120,7 +120,7 @@ const Workspace = () => {
         bookmark_name.current.value = '';
         bookmark_page.current.value = '';
 
-        saveBookmarksToDrive();
+        // saveBookmarksToDrive();
     };
 
     const saveBookmarksToDrive = async () => {
@@ -205,9 +205,9 @@ const Workspace = () => {
         getFilesFromDrive();
     }, []);
 
-    useEffect(() => {
-        handleFileUpload();
-    }, [fileList])
+    // useEffect(() => {
+    //     handleFileUpload();
+    // }, [fileList])
 
     
     const handleFileUpload = async () => {
