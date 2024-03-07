@@ -26,6 +26,7 @@ const Workspace = () => {
     const [toShowBookmarks, setToShowBookmarks] = useState([]);
 
     const [fileList, setFileList] = useState([]);
+    const fileInputRef = useRef();
 
 
     const getFilesFromDrive = async () => {
@@ -230,6 +231,7 @@ const Workspace = () => {
           });
     
           await Promise.all(uploadPromises);
+          setFileList([]);
         } catch (error) {
           console.error('Error uploading files to Drive:', error);
         }
@@ -240,7 +242,10 @@ const Workspace = () => {
         setFileList(files);
       };
 
-
+      const handleButtonClick = () => {
+        // Programmatically trigger the file input click event
+        fileInputRef.current.click();
+      };
 
 
     return (
@@ -273,6 +278,7 @@ const Workspace = () => {
                                 onChange={(e) => handleFileSelect(e.target.files)}
                                 multiple
                                 id="fileInput"
+                                ref={fileInputRef}
                                 style={{ display: 'none' }} // Hide the input element
                             /></li>
                     </ul>
