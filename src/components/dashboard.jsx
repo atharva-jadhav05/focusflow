@@ -145,11 +145,14 @@ const Dashboard = () => {
     const deleteCard = async (card) => {
         try {
 
+            console.log(cardData);
+            console.log(cards);
+
             const cardToDelete = cardData.find((c) => c.name === card.key);
             console.log(cardToDelete);
 
             if (!cardToDelete) {
-                console.error('Folder not found in the list:', card.name);
+                console.error('Folder not found in the list:', card.key);
                 return;
             }
 
