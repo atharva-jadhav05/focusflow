@@ -203,7 +203,7 @@ const Workspace = () => {
         // iframeRef.current.src = `${basePdfUrl}#page=${bookmark.page}`;
         iframeRef.current.src = bookmark.url;
         console.log(iframeRef.current.src);
-        iframeRef.current.contentWindow.location.reload(true);
+        // iframeRef.current.contentWindow.location.reload(true);
 
     }
 
