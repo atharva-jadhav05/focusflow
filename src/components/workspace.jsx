@@ -19,10 +19,12 @@ const Workspace = () => {
     const iframeRef = useRef();
     const bookmark_name = useRef();
     const bookmark_page = useRef();
+    const [currentFileId, setCurrentFileId] = useState();
 
 
     const [bookmarks, setBookmarks] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [toShowBookmarks, setToShowBookmarks] = useState([]);
 
     const getFilesFromDrive = async () => {
         const apiUrl = 'https://www.googleapis.com/drive/v3/files';
@@ -54,6 +56,9 @@ const Workspace = () => {
                 const pdfUrl = URL.createObjectURL(pdfBlob);
 
                 iframeRef.current.src = pdfUrl;
+                setCurrentFileId(file.id);
+
+                fetchBookmarks(file.id);
 
             })
             .catch(error => {
@@ -61,24 +66,143 @@ const Workspace = () => {
             });
     }
 
+    const fetchBookmarks = async (fileId) => {
+        const fileName = 'bookmarks.json';
+    
+        try {
+            // Check if the bookmarks file exists in the specified folder
+            const listFilesUrl = 'https://www.googleapis.com/drive/v3/files';
+            const listFilesResponse = await axios.get(listFilesUrl, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                params: {
+                    q: `name='${fileName}' and '${folderId}' in parents and trashed=false`,
+                },
+            });
+    
+            const files = listFilesResponse.data.files;
+    
+            if (files.length > 0) {
+                // File exists, fetch and display bookmarks
+                const file_Id = files[0].id;
+                const downloadUrl = `https://www.googleapis.com/drive/v3/files/${file_Id}/export?mimeType=application/json`;
+                const downloadResponse = await axios.get(downloadUrl, {
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+    
+                const bookmarksData = downloadResponse.data || {};
+                const currentFileBookmarks = bookmarksData.filter(bookmark => bookmark.fileId === fileId);
+
+                setToShowBookmarks(currentFileBookmarks);
+                console.log('Bookmarks loaded from Drive:', currentFileBookmarks);
+            } else {
+                // File doesn't exist, clear bookmarks
+                setBookmarks({});
+                console.log('No bookmarks found for this PDF.');
+            }
+        } catch (error) {
+            console.error('Error fetching bookmarks:', error);
+        }
+    };
+
     const addBookmark = () => {
-        setBookmarks([...bookmarks, { name: bookmark_name.current.value, page: bookmark_page.current.value }]);
-        console.log(bookmark_name.current.value, bookmark_page.current.value);
+        setBookmarks([...bookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value }]);
+        setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value }]);
+        console.log(currentFileId, bookmark_name.current.value, bookmark_page.current.value);
         bookmark_name.current.value = '';
         bookmark_page.current.value = '';
+
+        saveBookmarksToDrive();
     };
+
+    const saveBookmarksToDrive = async () => {
+        const bookmarksData = JSON.stringify(bookmarks);
+        const fileName = 'bookmarks.json';
+
+        // Check if the bookmarks file exists in the specified folder
+        const listFilesUrl = 'https://www.googleapis.com/drive/v3/files';
+        const listFilesResponse = await axios.get(listFilesUrl, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+            params: {
+                q: `name='${fileName}' and '${folderId}' in parents and trashed=false`,
+            },
+        });
+
+        const files = listFilesResponse.data.files;
+
+        try {
+            // If the file doesn't exist, create it
+            if (files.length === 0) {
+                await createBookmarksFile(fileName);
+            }
+
+            // Get the existing or newly created file ID
+            const fileId = files.length > 0 ? files[0].id : await createBookmarksFile(fileName);
+
+            // Upload the updated bookmarks data to the file
+            const uploadUrl = `https://www.googleapis.com/upload/drive/v3/files/${fileId}`;
+            await axios.patch(uploadUrl, bookmarksData, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    'Content-Type': 'application/json',
+                },
+                params: {
+                    uploadType: 'media',
+                },
+            });
+
+            console.log('Bookmarks updated and saved to Drive. File ID:', fileId);
+        } catch (error) {
+            console.error('Error saving bookmarks to Drive:', error);
+        }
+    };
+
+    const createBookmarksFile = async (fileName) => {
+        // Create the bookmarks file in the specified folder
+        const createFileUrl = 'https://www.googleapis.com/upload/drive/v3/files';
+        const createFileResponse = await axios.post(createFileUrl, {
+            name: fileName,
+            mimeType: 'application/json',
+            parents: [folderId],
+        }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+            },
+            params: {
+                uploadType: 'multipart',
+            },
+        });
+
+        const fileId = createFileResponse.data.id;
+        console.log('Bookmarks file created. File ID:', fileId);
+        return fileId;
+    };
+
+
+
+
+
+
 
     const handleBookmarkClick = (bookmark) => {
         const currentUrl = iframeRef.current.src;
         const basePdfUrl = currentUrl.split('#')[0];
-        
+
         iframeRef.current.src = `${basePdfUrl}#page=${bookmark.page}`;
         iframeRef.current.contentWindow.location.reload(true);
-        
+
     }
+
 
     useEffect(() => {
         getFilesFromDrive();
+        loadBookmarksFromDrive();
     }, []);
 
 
@@ -142,7 +266,7 @@ const Workspace = () => {
                     <div class="checklist">
                         <h3 style={{ color: "white" }}>Bookmarks</h3>
                         {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
-                        {bookmarks.map((bookmark, index) => (
+                        {toShowBookmarks.map((bookmark, index) => (
                             <button key={index} onClick={() => handleBookmarkClick(bookmark)}>
                                 {bookmark.name} - Page {bookmark.page}
                             </button>
