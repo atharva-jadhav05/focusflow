@@ -223,7 +223,7 @@ const Workspace = () => {
       formData.append('file', file);
 
       const response = await axios.post(
-        `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true&parents=${folderId}`,
+        `https://cors-anywhere.herokuapp.com/https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&supportsAllDrives=true&parents=${folderId}`,
         formData,
         {
           headers: {
