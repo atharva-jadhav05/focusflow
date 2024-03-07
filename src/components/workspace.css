@@ -190,7 +190,18 @@
     }
 
     .checklist.button {
-        width: 80%;
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 5px;
+        text-align: left;
+        background-color: #37377a;
+        color: #FFFBEB;
+        border: 1px solid #555;
+        border-radius: 5px;
+        cursor: pointer;
+        position: relative;
+        transition: transform 0.2s ease;
     }
 
     .checklist label {
