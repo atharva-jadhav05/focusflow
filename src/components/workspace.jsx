@@ -202,7 +202,6 @@ const Workspace = () => {
 
     useEffect(() => {
         getFilesFromDrive();
-        loadBookmarksFromDrive();
     }, []);
 
 
