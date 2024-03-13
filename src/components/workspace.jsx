@@ -218,6 +218,10 @@ const Workspace = () => {
 
     
     const handleFileUpload = async (files) => {
+        const drive = google.drive({
+            version: 'v3',
+            auth: accessToken, // Replace with the user's access token
+          });
     //     try {
     //         console.log(files);
           
