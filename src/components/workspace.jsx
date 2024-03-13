@@ -7,6 +7,8 @@ import LogoSvg from "./logosvg";
 
 
 const Workspace = () => {
+    const [loading, setLoading] = useState(true);
+
     const navigate = useNavigate();
     const location = useLocation();
     const { state } = location;
@@ -31,44 +33,63 @@ const Workspace = () => {
 
     const getFilesFromDrive = async () => {
         const apiUrl = 'https://www.googleapis.com/drive/v3/files';
+        try {
+            const response = await axios.get(apiUrl, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                params: {
+                    q: `'${folderId}' in parents and mimeType='application/pdf'`,
+                },
+            });
 
-        const response = await axios.get(apiUrl, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-            params: {
-                q: `'${folderId}' in parents and mimeType='application/pdf'`,
-            },
-        });
+            const filesWithBlobLinks = await Promise.all(
+                response.data.files.map(async file => {
+                    try {
+                        const pdfBlobResponse = await axios.get(
+                            `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`,
+                            {
+                                headers: {
+                                    Authorization: `Bearer ${accessToken}`,
+                                },
+                                responseType: 'blob',
+                            }
+                        );
+                        const pdfBlob = new Blob([pdfBlobResponse.data], { type: 'application/pdf' });
+                        const blobUrl = URL.createObjectURL(pdfBlob);
 
-        const pdf_files = response.data.files;
-        setFiles(pdf_files)
-        console.log(response);
+                        return {
+                            ...file,
+                            blob_link: blobUrl,
+                        };
+                    } catch (error) {
+                        console.error(`Error fetching PDF for file ${file.id}:`, error);
+                        return null; // Return null for failed files
+                    }
+                })
+            );
+            const validFilesWithBlobLinks = filesWithBlobLinks.filter(file => file !== null);
+
+            setFiles(validFilesWithBlobLinks);
+            console.log(validFilesWithBlobLinks);
+
+        } catch (error) {
+            console.error('Error fetching PDF files:', error);
+        } finally {
+            setLoading(false); // Turn off loading indicator regardless of success or failure
+        }
 
     }
 
     const displayPDF = (file) => {
+        const pdfUrl = file.blob_link;
 
-        // setToShowBookmarks([]);
-
-        const url = `https://www.googleapis.com/drive/v3/files/${file.id}?alt=media`;
-        const headers = {
-            Authorization: `Bearer ${accessToken}`,
-        };
-        axios.get(url, { headers, responseType: 'blob' })
-            .then(response => {
-                const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
-                const pdfUrl = URL.createObjectURL(pdfBlob);
-
-                iframeRef.current.src = pdfUrl;
-                setCurrentFileId(file.id);
-
-                // fetchBookmarks(file.id);
-
-            })
-            .catch(error => {
-                console.error('Error fetching PDF:', error);
-            });
+        if (pdfUrl) {
+            iframeRef.current.src = pdfUrl;
+            setCurrentFileId(file.id);
+        } else {
+            console.error('Blob link not found for file:', file);
+        }
     }
 
     const fetchBookmarks = async (fileId) => {
@@ -120,7 +141,7 @@ const Workspace = () => {
         const url = `${basePdfUrl}#page=${bookmark_page.current.value}`;
 
         setBookmarks([...bookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url }]);
-        setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url  }]);
+        setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url }]);
         console.log(currentFileId, bookmark_name.current.value, bookmark_page.current.value, url);
         bookmark_name.current.value = '';
         bookmark_page.current.value = '';
@@ -213,7 +234,7 @@ const Workspace = () => {
     }, []);
 
 
-    
+
     // const handleFileUpload = async (files) => {
     //     const drive = google.drive({
     //         version: 'v3',
@@ -221,15 +242,15 @@ const Workspace = () => {
     //       });
     // //     try {
     // //         console.log(files);
-          
+
     // // const uploadPromises = [];
-    
+
     // for (let i = 0; i < files.length; i++) {
     //     try {
     //         const pdfFile = fileList[i];
     //         const fileStream = pdfFile.stream; // File stream
     //         const fileSize = fileStream.size; // File size
-        
+
     //         // Upload PDF file
     //         const res = await drive.files.create({
     //           requestBody: {
@@ -253,7 +274,7 @@ const Workspace = () => {
     //             body: fileStream, // File stream
     //           },
     //         });
-        
+
     //         console.log('File uploaded:', res.data);
     //       } catch (error) {
     //         console.error('Error uploading file:', error);
@@ -284,98 +305,101 @@ const Workspace = () => {
     // //       console.error('Error uploading files to Drive:', error);
     //     }
     //   };
-    
+
 
     const handleFileSelect = async (files) => {
         console.log(files);
         await setFileList(files);
         // handleFileUpload(files);
-      };
+    };
 
-      const handleButtonClick = () => {
+    const handleButtonClick = () => {
         // Programmatically trigger the file input click event
         fileInputRef.current.click();
-      };
+    };
 
 
     return (
         <>
-            <div className="workspace">
-                {/* <!-- Navbar --> */}
-                <div class="navbar">
-                    <div class="logo">
-                        <LogoSvg />
+            {loading ? (
+                <div>Loading...</div> // Render loading indicator while fetching files
+            ) : (
+                <div className="workspace">
+                    {/* <!-- Navbar --> */}
+                    <div class="navbar">
+                        <div class="logo">
+                            <LogoSvg />
+                        </div>
+                        <ul class="menu">
+                            <li><a href="#" onClick={() => navigate(-1)}>Home</a></li>
+
+                            <li class="dropdown">
+                                <a href="#">Bookmark page &#9662;</a>
+                                <div class="dropdown-content">
+                                    <input ref={bookmark_name} type="text" placeholder="Type bookmark name"></input>
+                                    <input ref={bookmark_page} type="number" placeholder="Type Page number"></input>
+
+                                    <button id="addBookmarkBtn" onClick={addBookmark}>Add</button>
+                                    <div id="bookmarksList"></div>
+                                </div>
+                            </li>
+                            <li><a href="#">Highlighter</a></li>
+
+                            <li><a href="#" id="importButton" onClick={handleButtonClick}>Upload</a>
+                                <input
+                                    type="file"
+                                    accept=".pdf"
+                                    onChange={(e) => handleFileSelect(e.target.files)}
+                                    multiple
+                                    id="fileInput"
+                                    ref={fileInputRef}
+                                    style={{ display: 'none' }} // Hide the input element
+                                /></li>
+                        </ul>
                     </div>
-                    <ul class="menu">
-                        <li><a href="#" onClick={() => navigate(-1)}>Home</a></li>
 
-                        <li class="dropdown">
-                            <a href="#">Bookmark page &#9662;</a>
-                            <div class="dropdown-content">
-                                <input ref={bookmark_name} type="text" placeholder="Type bookmark name"></input>
-                                <input ref={bookmark_page} type="number" placeholder="Type Page number"></input>
-
-                                <button id="addBookmarkBtn" onClick={addBookmark}>Add</button>
-                                <div id="bookmarksList"></div>
+                    {/* <!-- Main content --> */}
+                    <div class="container">
+                        {/* <!-- Left section for playlist --> */}
+                        <div class="playlist">
+                            <div class="pdf-button-container" id="pdfList">
+                                {/* <!-- PDF buttons will be dynamically added here --> */}
+                                {files.map((file) => (
+                                    <button
+                                        key={file.id}
+                                        className="pdf-button"
+                                        onClick={() => displayPDF(file)}
+                                    >
+                                        {file.name}
+                                    </button>
+                                ))}
                             </div>
-                        </li>
-                        <li><a href="#">Highlighter</a></li>
+                        </div>
 
-                        <li><a href="#" id="importButton" onClick={handleButtonClick}>Upload</a>
-                            <input
-                                type="file"
-                                accept=".pdf"
-                                onChange={(e) => handleFileSelect(e.target.files)}
-                                multiple
-                                id="fileInput"
-                                ref={fileInputRef}
-                                style={{ display: 'none' }} // Hide the input element
-                            /></li>
-                    </ul>
-                </div>
-
-                {/* <!-- Main content --> */}
-                <div class="container">
-                    {/* <!-- Left section for playlist --> */}
-                    <div class="playlist">
-                        <div class="pdf-button-container" id="pdfList">
-                            {/* <!-- PDF buttons will be dynamically added here --> */}
-                            {files.map((file) => (
-                                <button
-                                    key={file.id}
-                                    className="pdf-button"
-                                    onClick={() => displayPDF(file)}
-                                >
-                                    {file.name}
+                        {/* <!-- Middle section for PDF viewer --> */}
+                        <div class="pdf-viewer">
+                            <iframe
+                                ref={iframeRef}
+                                id="pdfFrame"
+                                title="PDF Viewer"
+                                width="100%"
+                                height="600"
+                                frameborder="0"
+                            ></iframe>
+                        </div>
+                        {/* <!-- Right section for checklist --> */}
+                        <div class="checklist">
+                            <h3 style={{ color: "white" }}>Bookmarks</h3>
+                            {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
+                            {toShowBookmarks.map((bookmark, index) => (
+                                <button key={index} onClick={() => handleBookmarkClick(bookmark)} style={{ display: 'block', width: '100%', backgroundColor: 'rgb(126 126 158)', color: '#FFFBEB', height: '5vh' }}>
+                                    {bookmark.name} - Page {bookmark.page}
                                 </button>
                             ))}
                         </div>
                     </div>
 
-                    {/* <!-- Middle section for PDF viewer --> */}
-                    <div class="pdf-viewer">
-                        <iframe
-                            ref={iframeRef}
-                            id="pdfFrame"
-                            title="PDF Viewer"
-                            width="100%"
-                            height="600"
-                            frameborder="0"
-                        ></iframe>
-                    </div>
-                    {/* <!-- Right section for checklist --> */}
-                    <div class="checklist">
-                        <h3 style={{ color: "white" }}>Bookmarks</h3>
-                        {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
-                        {toShowBookmarks.map((bookmark, index) => (
-                            <button key={index} onClick={() => handleBookmarkClick(bookmark)} style={{display: 'block', width: '100%', backgroundColor: 'rgb(126 126 158)', color: '#FFFBEB', height: '5vh'}}>
-                                {bookmark.name} - Page {bookmark.page}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-
-            </div>
+                </div>)}
         </>
     )
 }
