@@ -120,7 +120,7 @@ const Workspace = () => {
         const url = `${basePdfUrl}#page=${bookmark_page.current.value}`;
 
         setBookmarks([...bookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url }]);
-        setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url  }]);
+        setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url }]);
         console.log(currentFileId, bookmark_name.current.value, bookmark_page.current.value, url);
         bookmark_name.current.value = '';
         bookmark_page.current.value = '';
@@ -212,54 +212,54 @@ const Workspace = () => {
         getFilesFromDrive();
     }, []);
 
-    // useEffect(() => {
-    //     handleFileUpload();
-    // }, [fileList])
+    useEffect(() => {
+        handleFileUpload();
+    }, [fileList])
 
-    
+
     const handleFileUpload = async () => {
         try {
             console.log(fileList);
-          
-    const uploadPromises = [];
-    
-    for (let i = 0; i < fileList.length; i++) {
-      const file = fileList[i];
 
-      const formData = new FormData();
-      formData.append('file', file);
+            const uploadPromises = [];
 
-      const response = await axios.post(
-        `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&parents=${folderId}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/pdf',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+            for (let i = 0; i < fileList.length; i++) {
+                const file = fileList[i];
 
-      console.log('File uploaded:', response.data.name);
-      uploadPromises.push(response);
-    }
+                const formData = new FormData();
+                formData.append('file', file);
 
-    await Promise.all(uploadPromises);
-          setFileList([]);
+                const response = await axios.post(
+                    `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&parents=${folderId}`,
+                    formData,
+                    {
+                        headers: {
+                            'Content-Type': 'application/pdf',
+                            Authorization: `Bearer ${accessToken}`,
+                        },
+                    }
+                );
+
+                console.log('File uploaded:', response.data.name);
+                uploadPromises.push(response);
+            }
+
+            await Promise.all(uploadPromises);
+            setFileList([]);
         } catch (error) {
-          console.error('Error uploading files to Drive:', error);
+            console.error('Error uploading files to Drive:', error);
         }
-      };
-    
+    };
+
 
     const handleFileSelect = (files) => {
         setFileList(files);
-      };
+    };
 
-      const handleButtonClick = () => {
+    const handleButtonClick = () => {
         // Programmatically trigger the file input click event
         fileInputRef.current.click();
-      };
+    };
 
 
     return (
@@ -332,7 +332,7 @@ const Workspace = () => {
                         <h3 style={{ color: "white" }}>Bookmarks</h3>
                         {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
                         {toShowBookmarks.map((bookmark, index) => (
-                            <button key={index} onClick={() => handleBookmarkClick(bookmark)} style={{display: 'block', width: '100%', backgroundColor: 'rgb(126 126 158)', color: '#FFFBEB', height: '5vh'}}>
+                            <button key={index} onClick={() => handleBookmarkClick(bookmark)} style={{ display: 'block', width: '100%', backgroundColor: 'rgb(126 126 158)', color: '#FFFBEB', height: '5vh' }}>
                                 {bookmark.name} - Page {bookmark.page}
                             </button>
                         ))}
