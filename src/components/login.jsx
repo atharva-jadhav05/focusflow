@@ -12,6 +12,8 @@ const LoginPage = () => {
     const [ user, setUser ] = useState();
     const [ profile, setProfile ] = useState([]);
 
+
+    // For UI Transitions
     const handleSignUpClick = () => {
         setIsSignUpActive(true);
     };
@@ -21,12 +23,16 @@ const LoginPage = () => {
     };
 
 
+
+    // For GOOGLE LOGIN
     const login = useGoogleLogin({
         onSuccess: (codeResponse) => setUser(codeResponse),
         onError: (error) => console.log('Login Failed:', error),
         scope: "email profile https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile openid https://www.googleapis.com/auth/drive",
     });
 
+
+    // Whenever user variable changes, navigate to dashboard and pass user credentials
     useEffect(
         () => {
             if (user) {

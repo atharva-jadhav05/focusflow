@@ -1,4 +1,3 @@
-// import { gapi } from "gapi-script";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -9,21 +8,29 @@ import LogoSvg from './logosvg';
 
 
 const Dashboard = () => {
+    // To navigate to other pages and to get the passed variables
     const navigate = useNavigate();
     const location = useLocation();
-    const { state } = location;
-    const [profile, setProfile] = useState([]);
-    const [mainFolderId, setMainFolderId] = useState(null);
 
+    // Get user access token
+    const { state } = location;
     const user = state?.user || null;
     const accessToken = user.access_token;
 
-    // to store data of cards
-    const [cards, setCards] = useState([]);
-    const [cardData, setCardData] = useState([]);
-    const [driveFolders, setDriveFolders] = useState([]);
+    // ID of FocusFlow folder in user's drive
+    const [mainFolderId, setMainFolderId] = useState(null);
 
+
+    // to store renders of cards
+    const [cards, setCards] = useState([]);
+
+    // to store data of cards
+    const [cardData, setCardData] = useState([]);
+
+    // Required for creating cards
     const [cardName, setCardName] = useState('');
+
+    // For UI of Page
     const [isCustomBlockVisible, setCustomBlockVisible] = useState(false);
     const [workspaceOptions, setWorkspaceOptions] = useState([]);
     const [isConfirmationPopupVisible, setConfirmationPopupVisible] = useState(false);
@@ -32,10 +39,16 @@ const Dashboard = () => {
     const [isContextMenuVisible, setContextMenuVisible] = useState(false);
 
 
+    // Go to clicked card's workspace
     const goToWorkspace = (name, id) => {
-        console.log('double clicked on ', name);
-        navigate(`/workspace/${name}`, {state: { name, id, accessToken }});
+        navigate(`/workspace/${name}`, { state: { name, id, accessToken } });
     }
+
+
+
+    /*
+    FOR UI TRANSITIONS FOR THE PAGE
+    */
 
     const showCustomBlock = () => {
         setCustomBlockVisible(true);
@@ -46,28 +59,45 @@ const Dashboard = () => {
         setCardName('');
     };
 
-    const addCardDataToList = (cardName, folderId) => {
-        setCardData(prevList => [...prevList, { name: cardName, id: folderId }]);
-    }
 
-    const cardNameExists = (name, container) => {
-        for (const existingCard of container) {
-            if (existingCard.key === name) {
-                return true;
-            }
-        }
-        return false;
+    const returnToLoginPage = () => {
+        // Add the functionality to return to the login page here
+        alert('Returning to Login Page');
     };
 
-    const getCardId = (name, container) => {
-        for (const existingCard of container) {
-            if (existingCard.name === name) {
-                return existingCard.id;
-            }
-        }
-        return null;
-    }
+    const showContextMenu = (event, card) => {
+        event.preventDefault();
+        setContextMenuPosition({ x: event.clientX, y: event.clientY });
+        setSelectedCardToDelete(card);
+        setContextMenuVisible(true);
+    };
 
+    const hideContextMenu = () => {
+        setContextMenuVisible(false);
+    };
+
+    const confirmDelete = () => {
+        deleteCard(selectedCardToDelete);
+        setConfirmationPopupVisible(false);
+    };
+
+    const showConfirmationPopup = (card) => {
+        setConfirmationPopupVisible(true);
+        hideContextMenu();
+    };
+
+    const hideConfirmationPopup = () => {
+        setConfirmationPopupVisible(false);
+        setSelectedCardToDelete(null);
+    };
+
+
+    /*
+    CARD RELATED FUNCTIONS
+    */
+
+
+    // New Card Add
     const addCardFromCustomBlock = async () => {
 
         if (cardName.trim() !== '' && !cardNameExists(cardName, cards)) {
@@ -114,9 +144,9 @@ const Dashboard = () => {
 
 
             const newCard = (
-                <div 
-                    className="card" 
-                    key={cardName} 
+                <div
+                    className="card"
+                    key={cardName}
                     onContextMenu={(e) => showContextMenu(e, newCard)}
                     onDoubleClick={() => goToWorkspace(cardName, getCardId(cardName, cardData))}
                 >
@@ -142,20 +172,37 @@ const Dashboard = () => {
         }
     };
 
+    const addCardDataToList = (cardName, folderId) => {
+        setCardData(prevList => [...prevList, { name: cardName, id: folderId }]);
+    }
+
+    const cardNameExists = (name, container) => {
+        for (const existingCard of container) {
+            if (existingCard.key === name) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    const getCardId = (name, container) => {
+        for (const existingCard of container) {
+            if (existingCard.name === name) {
+                return existingCard.id;
+            }
+        }
+        return null;
+    }
+
     const deleteCard = async (card) => {
         try {
 
-            console.log(cardData);
-            console.log(cards);
-
             const cardToDelete = cardData.find((c) => c.name === card.key);
-            console.log(cardToDelete);
 
             if (!cardToDelete) {
                 console.error('Folder not found in the list:', card.key);
                 return;
             }
-
 
             const apiUrl = `https://www.googleapis.com/drive/v3/files/${cardToDelete.id}`;
 
@@ -175,47 +222,23 @@ const Dashboard = () => {
             setCardData(updatedCardData);
             setWorkspaceOptions(updatedWorkspaceOptions);
 
+            console.log('Successfully deleted ', cardToDelete.name);
+
         } catch (error) {
             console.error('Error deleting folder:', error);
             // Handle the error as needed
         }
     };
 
-    const returnToLoginPage = () => {
-        // Add the functionality to return to the login page here
-        alert('Returning to Login Page');
-    };
 
 
-    const showContextMenu = (event, card) => {
-        event.preventDefault();
-        setContextMenuPosition({ x: event.clientX, y: event.clientY });
-        setSelectedCardToDelete(card);
-        setContextMenuVisible(true);
-    };
-
-    const hideContextMenu = () => {
-        setContextMenuVisible(false);
-    };
-
-    const confirmDelete = () => {
-        deleteCard(selectedCardToDelete);
-        setConfirmationPopupVisible(false);
-    };
-
-    const showConfirmationPopup = (card) => {
-        setConfirmationPopupVisible(true);
-        hideContextMenu();
-    };
-
-    const hideConfirmationPopup = () => {
-        setConfirmationPopupVisible(false);
-        setSelectedCardToDelete(null);
-    };
+    /*
+    DRIVE RELATED OPERATIONS
+    */
 
     const checkAndCreateFolder = async (folder_name) => {
         try {
-            const accessToken = user.access_token; // Replace with your access token
+            const accessToken = user.access_token;
             const apiUrl = 'https://www.googleapis.com/drive/v3/files';
             const folderName = folder_name;
 
@@ -268,17 +291,17 @@ const Dashboard = () => {
 
             const folders = response.data.files;
             console.log('Folders in drive FocusFlow');
+            console.log(folders);
 
             folders.forEach((folder) => {
                 if (folder.name.trim() !== '' && !cardNameExists(folder.name, cards)) {
 
-                    console.log(folder);
                     addCardDataToList(folder.name, folder.id);
 
                     const newCard = (
-                        <div 
-                            className="card" 
-                            key={folder.name} 
+                        <div
+                            className="card"
+                            key={folder.name}
                             onContextMenu={(e) => showContextMenu(e, newCard)}
                             onDoubleClick={() => goToWorkspace(folder.name, folder.id)}
                         >
@@ -306,6 +329,7 @@ const Dashboard = () => {
     };
 
 
+    // On Render
     useEffect(() => {
         console.log(user)
 
@@ -318,9 +342,8 @@ const Dashboard = () => {
                     }
                 })
             .then((res) => {
-                setProfile(res.data);
+                console.log('User Info')
                 console.log(res.data);
-
             })
             .catch((err) => console.log(err));
 
