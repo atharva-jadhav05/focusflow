@@ -128,8 +128,8 @@ const Workspace = () => {
 
         const url = "https://focusflow-server.onrender.com/add_bookmark";
         const params = {
-            access_token: accessToken,
-            file_id: bookmarkFileId
+            'access_token': accessToken,
+            'file_id': bookmarkFileId
         };
 
         try {
