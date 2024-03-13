@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { google } from 'googleapis';
 
 import './workspace.css';
 import LogoSvg from "./logosvg";
@@ -212,10 +211,6 @@ const Workspace = () => {
     useEffect(() => {
         getFilesFromDrive();
     }, []);
-
-    // useEffect(() => {
-    //     handleFileUpload();
-    // }, [fileList])
 
     
     const handleFileUpload = async (files) => {
