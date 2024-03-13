@@ -225,6 +225,7 @@ const Workspace = () => {
     
     for (let i = 0; i < files.length; i++) {
         try {
+            const pdfFile = fileList[i];
             const fileStream = pdfFile.stream; // File stream
             const fileSize = fileStream.size; // File size
         
@@ -233,7 +234,7 @@ const Workspace = () => {
               requestBody: {
                 name: pdfFile.name,
                 mimeType: 'application/pdf',
-                parents: ['<PARENT_FOLDER_ID>'], // Replace with the folder ID where you want to upload
+                parents: [folderId], // Replace with the folder ID where you want to upload
               },
               media: {
                 mimeType: 'application/pdf',
@@ -244,7 +245,7 @@ const Workspace = () => {
               requestBody: {
                 name: pdfFile.name,
                 mimeType: 'application/pdf',
-                parents: ['<PARENT_FOLDER_ID>'], // Replace with the folder ID where you want to upload
+                parents: [folderId], // Replace with the folder ID where you want to upload
               },
               media: {
                 mimeType: 'application/pdf',
