@@ -95,67 +95,53 @@ const Workspace = () => {
     }
 
 
-
-
-
-
-
-
-    const fetchBookmarks = async (fileId) => {
-        const fileName = 'bookmarks.json';
-
+    // Create Bookmarks File
+    const createBookmarksFile = async () => {
+        const url = "https://focusflow-server.onrender.com/create_bookmarks_json";
         try {
-            // Check if the bookmarks file exists in the specified folder
-            const listFilesUrl = 'https://www.googleapis.com/drive/v3/files';
-            const listFilesResponse = await axios.get(listFilesUrl, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                },
+            const response = await axios.get(url, {
                 params: {
-                    q: `name='${fileName}' and '${folderId}' in parents and trashed=false`,
-                },
+                    access_token: accessToken,
+                    folder_id: folderId
+                }
             });
 
-            const files = listFilesResponse.data.files;
+            setBookmarks(response.data.bookmarks_data);
+            setBookmarkFileId(response.data.file_id);
+            console.log(response);
 
-            if (files.length > 0) {
-                // File exists, fetch and display bookmarks
-                const file_Id = files[0].id;
-                const downloadUrl = `https://www.googleapis.com/drive/v3/files/${file_Id}/export?mimeType=application/json`;
-                const downloadResponse = await axios.get(downloadUrl, {
-                    headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                    },
-                });
-
-                const bookmarksData = downloadResponse.data || {};
-                const currentFileBookmarks = bookmarksData.filter(bookmark => bookmark.fileId === fileId);
-
-                setToShowBookmarks(currentFileBookmarks);
-                console.log('Bookmarks loaded from Drive:', currentFileBookmarks);
-            } else {
-                // File doesn't exist, clear bookmarks
-                setBookmarks([]);
-                console.log('No bookmarks found for this PDF.');
-            }
         } catch (error) {
-            console.error('Error fetching bookmarks:', error);
+            console.error('Error creating JSON bookmarks:', error);
+            return null;
         }
     };
 
-    const addBookmark = () => {
-        const currentUrl = iframeRef.current.src;
-        const basePdfUrl = currentUrl.split('#')[0];
 
-        const url = `${basePdfUrl}#page=${bookmark_page.current.value}`;
+    const addBookmark = async () => {
 
-        setBookmarks([...bookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url }]);
-        setToShowBookmarks([...toShowBookmarks, { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value, url: url }]);
-        console.log(currentFileId, bookmark_name.current.value, bookmark_page.current.value, url);
+        const data = { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value };
+        setBookmarks([...bookmarks, data ]);
+        setToShowBookmarks([...toShowBookmarks, data]);
+
+
+        const url = "https://focusflow-server.onrender.com/add_bookmark";
+        const params = {
+            access_token: accessToken,
+            file_id: bookmarkFileId
+        };
+
+        try {
+            const response = await axios.post(url, data, {
+                params: params
+            });
+            console.log(response.data);
+        } catch (error) {
+            console.error('Error adding bookmark:', error);
+        }
+
         bookmark_name.current.value = '';
         bookmark_page.current.value = '';
 
-        // saveBookmarksToDrive();
     };
 
     const saveBookmarksToDrive = async () => {
@@ -198,41 +184,13 @@ const Workspace = () => {
         }
     };
 
-    const createBookmarksFile = async () => {
-        const url = "https://focusflow-server.onrender.com/create_bookmarks_json";
-        try {
-            const response = await axios.get(url, {
-                params: {
-                    access_token: accessToken,
-                    folder_id: folderId
-                }
-            });
-
-            setBookmarks(response.data.bookmarks_data);
-            setBookmarkFileId(response.data.file_id);
-            console.log(response);
-
-        } catch (error) {
-            console.error('Error creating JSON bookmarks:', error);
-            return null;
-        }
-    };
-
-
-
-
-
 
 
     const handleBookmarkClick = (bookmark) => {
-        // const currentUrl = iframeRef.current.src;
-        // const basePdfUrl = currentUrl.split('#')[0];
+        const file = files.find(file => file.id === bookmark.fileId);
+        iframeRef.current.src = `${file.blob_link}#page=${bookmark.page}`;
 
-        // iframeRef.current.src = `${basePdfUrl}#page=${bookmark.page}`;
-        iframeRef.current.src = bookmark.url;
         console.log(iframeRef.current.src);
-        // iframeRef.current.contentWindow.location.reload(true);
-
     }
 
 
