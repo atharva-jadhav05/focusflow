@@ -123,6 +123,8 @@ const Workspace = () => {
         setBookmarks([...bookmarks, data ]);
         setToShowBookmarks([...toShowBookmarks, data]);
 
+        console.log(bookmarkFileId);
+
 
         const url = "https://focusflow-server.onrender.com/add_bookmark";
         const params = {
