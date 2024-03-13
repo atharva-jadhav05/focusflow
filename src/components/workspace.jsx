@@ -23,7 +23,7 @@ const Workspace = () => {
     const bookmark_page = useRef();
     const [currentFileId, setCurrentFileId] = useState();
 
-
+    const [bookmarkFileId, setBookmarkFileId] = useState();
     const [bookmarks, setBookmarks] = useState([]);
     const [toShowBookmarks, setToShowBookmarks] = useState([]);
 
@@ -31,6 +31,7 @@ const Workspace = () => {
     const fileInputRef = useRef();
 
 
+    // Load and create links for all files in folder
     const getFilesFromDrive = async () => {
         const apiUrl = 'https://www.googleapis.com/drive/v3/files';
         try {
@@ -81,6 +82,7 @@ const Workspace = () => {
 
     }
 
+    // Display PDF using blob link
     const displayPDF = (file) => {
         const pdfUrl = file.blob_link;
 
@@ -91,6 +93,13 @@ const Workspace = () => {
             console.error('Blob link not found for file:', file);
         }
     }
+
+
+
+
+
+
+
 
     const fetchBookmarks = async (fileId) => {
         const fileName = 'bookmarks.json';
@@ -189,26 +198,24 @@ const Workspace = () => {
         }
     };
 
-    const createBookmarksFile = async (fileName) => {
-        // Create the bookmarks file in the specified folder
-        const createFileUrl = 'https://www.googleapis.com/upload/drive/v3/files';
-        const createFileResponse = await axios.post(createFileUrl, {
-            name: fileName,
-            mimeType: 'application/json',
-            parents: [folderId],
-        }, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-            params: {
-                uploadType: 'multipart',
-            },
-        });
+    const createBookmarksFile = async () => {
+        const url = "https://focusflow-server.onrender.com/create_bookmarks_json";
+        try {
+            const response = await axios.get(url, {
+                params: {
+                    access_token: accessToken,
+                    folder_id: folderId
+                }
+            });
 
-        const fileId = createFileResponse.data.id;
-        console.log('Bookmarks file created. File ID:', fileId);
-        return fileId;
+            setBookmarks(response.bookmarks_data);
+            setBookmarkFileId(response.file_id);
+            console.log(response);
+
+        } catch (error) {
+            console.error('Error creating JSON bookmarks:', error);
+            return null;
+        }
     };
 
 
@@ -231,6 +238,7 @@ const Workspace = () => {
 
     useEffect(() => {
         getFilesFromDrive();
+        createBookmarksFile();
     }, []);
 
 
@@ -322,7 +330,10 @@ const Workspace = () => {
     return (
         <>
             {loading ? (
-                <div>Loading...</div> // Render loading indicator while fetching files
+                <div className="loader-container">
+                    <div className="loader"></div>
+                    <div class="loading-text">Loading files from drive...</div>
+                </div> // Render loading indicator while fetching files
             ) : (
                 <div className="workspace">
                     {/* <!-- Navbar --> */}
