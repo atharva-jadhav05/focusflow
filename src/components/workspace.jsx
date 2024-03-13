@@ -119,7 +119,7 @@ const Workspace = () => {
 
     const addBookmark = async () => {
 
-        const data = { fileId: currentFileId, name: bookmark_name.current.value, page: bookmark_page.current.value };
+        const data = { fileId: currentFileId, name: bookmark_name.current.value, page: parseInt(bookmark_page.current.value) };
         setBookmarks([...bookmarks, data ]);
         setToShowBookmarks([...toShowBookmarks, data]);
 
