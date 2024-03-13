@@ -217,13 +217,13 @@ const Workspace = () => {
     // }, [fileList])
 
     
-    const handleFileUpload = async () => {
+    const handleFileUpload = async (files) => {
         try {
-            console.log(fileList);
+            console.log(files);
           
     const uploadPromises = [];
     
-    for (let i = 0; i < fileList.length; i++) {
+    for (let i = 0; i < files.length; i++) {
       const file = fileList[i];
 
       const formData = new FormData();
@@ -255,7 +255,7 @@ const Workspace = () => {
     const handleFileSelect = async (files) => {
         console.log(files);
         await setFileList(files);
-        handleFileUpload();
+        handleFileUpload(files);
       };
 
       const handleButtonClick = () => {
