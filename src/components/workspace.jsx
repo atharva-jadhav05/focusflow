@@ -218,36 +218,68 @@ const Workspace = () => {
 
     
     const handleFileUpload = async (files) => {
-        try {
-            console.log(files);
+    //     try {
+    //         console.log(files);
           
-    const uploadPromises = [];
+    // const uploadPromises = [];
     
     for (let i = 0; i < files.length; i++) {
-      const file = fileList[i];
+        try {
+            const fileStream = pdfFile.stream; // File stream
+            const fileSize = fileStream.size; // File size
+        
+            // Upload PDF file
+            const res = await drive.files.create({
+              requestBody: {
+                name: pdfFile.name,
+                mimeType: 'application/pdf',
+                parents: ['<PARENT_FOLDER_ID>'], // Replace with the folder ID where you want to upload
+              },
+              media: {
+                mimeType: 'application/pdf',
+                body: fileStream, // File stream
+              },
+            }, {
+              // Use resumable upload for large files
+              requestBody: {
+                name: pdfFile.name,
+                mimeType: 'application/pdf',
+                parents: ['<PARENT_FOLDER_ID>'], // Replace with the folder ID where you want to upload
+              },
+              media: {
+                mimeType: 'application/pdf',
+                body: fileStream, // File stream
+              },
+            });
+        
+            console.log('File uploaded:', res.data);
+          } catch (error) {
+            console.error('Error uploading file:', error);
+          }
+    //   const file = fileList[i];
 
-      const formData = new FormData();
-      formData.append('file', file);
+    //   const formData = new FormData();
+    //   formData.append('file', file);
 
-      const response = await axios.post(
-        `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&parents=${folderId}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/pdf',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
+    //   const response = await axios.post(
+    //     `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&parents=${folderId}`,
+    //     formData,
+    //     {
+    //       headers: {
+    //         'Content-Type': 'application/pdf',
+    //         Authorization: `Bearer ${accessToken}`,
+    //       },
+    //     }
+    //   );
 
-      console.log('File uploaded:', response.data.name);
-      uploadPromises.push(response);
-    }
+    //   console.log('File uploaded:', response.data.name);
+    //   uploadPromises.push(response);
+    // }
 
-    await Promise.all(uploadPromises);
-          setFileList([]);
-        } catch (error) {
-          console.error('Error uploading files to Drive:', error);
+    // await Promise.all(uploadPromises);
+    //       setFileList([]);
+    //     } catch (error) {
+    //       console.error('Error uploading files to Drive:', error);
         }
       };
     
