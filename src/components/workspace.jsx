@@ -208,8 +208,8 @@ const Workspace = () => {
                 }
             });
 
-            setBookmarks(response.bookmarks_data);
-            setBookmarkFileId(response.file_id);
+            setBookmarks(response.data.bookmarks_data);
+            setBookmarkFileId(response.data.file_id);
             console.log(response);
 
         } catch (error) {
@@ -332,7 +332,7 @@ const Workspace = () => {
             {loading ? (
                 <div className="loader-container">
                     <div className="loader"></div>
-                    <div class="loading-text">Loading files from drive...</div>
+                    <div class="loading-text">&#9;&#9;Loading files from drive...</div>
                 </div> // Render loading indicator while fetching files
             ) : (
                 <div className="workspace">
