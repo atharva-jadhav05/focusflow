@@ -33,7 +33,7 @@ const LoginPage = () => {
                 console.log(user);
                 navigate('/dashboard', {state: { user }});
             }
-        });
+        }, [user]);
 
 
     return (
