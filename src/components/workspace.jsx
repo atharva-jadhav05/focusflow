@@ -107,6 +107,7 @@ const Workspace = () => {
             });
 
             setBookmarks(response.data.bookmarks_data);
+            setToShowBookmarks(response.data.bookmarks_data);
             setBookmarkFileId(response.data.file_id);
             console.log(response);
 
@@ -120,7 +121,7 @@ const Workspace = () => {
     const addBookmark = async () => {
 
         const data = { fileId: currentFileId, name: bookmark_name.current.value, page: parseInt(bookmark_page.current.value) };
-        setBookmarks([...bookmarks, data ]);
+        setBookmarks([...bookmarks, data]);
         setToShowBookmarks([...toShowBookmarks, data]);
 
         console.log(bookmarkFileId);
@@ -163,6 +164,60 @@ const Workspace = () => {
     }, []);
 
 
+    const fileToBytes = (file) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+    
+            reader.onload = () => {
+                const arrayBuffer = reader.result;
+                const bytes = new Uint8Array(arrayBuffer);
+                resolve(bytes);
+            };
+    
+            reader.onerror = (error) => {
+                reject(error);
+            };
+    
+            reader.readAsArrayBuffer(file);
+        });
+    };
+    
+    const handleFileUpload = async (files) => {
+        const url = "https://focusflow-server.onrender.com/upload_pdf_to_drive";
+    
+        // Use Promise.all to wait for all files to be uploaded
+        const uploadPromises = files.map(async (file) => {
+            try {
+                const bytes = await fileToBytes(file);
+                console.log('File converted to bytes:', bytes);
+    
+                const params = {
+                    access_token: accessToken,
+                    file_name: file.name,
+                    folder_id: folderId
+                };
+    
+                const response = await axios.post(url, bytes, {
+                    params: params,
+                    headers: {
+                        'Content-Type': 'application/octet-stream'
+                    }
+                });
+    
+                console.log('Response from server:', response.data);
+            } catch (error) {
+                console.error('Error uploading PDF to drive:', error);
+            }
+        });
+    
+        try {
+            // Wait for all uploads to finish
+            await Promise.all(uploadPromises);
+            console.log('All files uploaded successfully');
+        } catch (error) {
+            console.error('Error uploading files:', error);
+        }
+    };
 
     // const handleFileUpload = async (files) => {
     //     const drive = google.drive({
@@ -275,7 +330,6 @@ const Workspace = () => {
                                     <div id="bookmarksList"></div>
                                 </div>
                             </li>
-                            <li><a href="#">Highlighter</a></li>
 
                             <li><a href="#" id="importButton" onClick={handleButtonClick}>Upload</a>
                                 <input
