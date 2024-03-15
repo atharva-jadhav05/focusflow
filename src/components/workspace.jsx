@@ -194,7 +194,7 @@ const Workspace = () => {
                 const bytes = await fileToBytes(file);
                 console.log('File converted to bytes:', bytes);
 
-                newURL = `${url}?access_token=${accessToken}&folder_id=${folderId}&file_name=${file.name}`;
+                const newURL = `${url}?access_token=${accessToken}&folder_id=${folderId}&file_name=${file.name}`;
     
                 const response = await axios.post(newURL, bytes, {
                     headers: {
