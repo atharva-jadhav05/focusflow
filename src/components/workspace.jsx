@@ -278,6 +278,7 @@ const Workspace = () => {
                     <div class="container">
                         {/* <!-- Left section for playlist --> */}
                         <div class="playlist">
+                        <h3 style="color: white;">PDFs</h3>
                             <div class="pdf-button-container" id="pdfList">
                                 {/* <!-- PDF buttons will be dynamically added here --> */}
                                 {files.map((file) => (
