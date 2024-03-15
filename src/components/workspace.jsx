@@ -116,7 +116,7 @@ const Workspace = () => {
         }
     };
 
-
+    // Add bookmark to file
     const addBookmark = async () => {
 
         const data = { fileId: currentFileId, name: bookmark_name.current.value, page: parseInt(bookmark_page.current.value) };
@@ -146,51 +146,12 @@ const Workspace = () => {
 
     };
 
-    const saveBookmarksToDrive = async () => {
-        const bookmarksData = JSON.stringify(bookmarks);
-        const fileName = 'bookmarks.json';
-
-        // Check if the bookmarks file exists in the specified folder
-        const listFilesUrl = 'https://www.googleapis.com/drive/v3/files';
-        const listFilesResponse = await axios.get(listFilesUrl, {
-            headers: {
-                Authorization: `Bearer ${accessToken}`,
-            },
-            params: {
-                q: `name='${fileName}' and '${folderId}' in parents and trashed=false`,
-            },
-        });
-
-        const files = listFilesResponse.data.files;
-
-        try {
-
-            // Get the existing or newly created file ID
-            const fileId = files.length > 0 ? files[0].id : await createBookmarksFile(fileName);
-
-            // Upload the updated bookmarks data to the file
-            const uploadUrl = `https://www.googleapis.com/upload/drive/v3/files/${fileId}`;
-            await axios.patch(uploadUrl, bookmarksData, {
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    'Content-Type': 'application/json',
-                },
-                params: {
-                    uploadType: 'media',
-                },
-            });
-
-            console.log('Bookmarks updated and saved to Drive. File ID:', fileId);
-        } catch (error) {
-            console.error('Error saving bookmarks to Drive:', error);
-        }
-    };
-
 
 
     const handleBookmarkClick = (bookmark) => {
         const file = files.find(file => file.id === bookmark.fileId);
         iframeRef.current.src = `${file.blob_link}#page=${bookmark.page}`;
+        setCurrentFileId(file.id);
 
         console.log(iframeRef.current.src);
     }
