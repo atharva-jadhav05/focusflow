@@ -214,77 +214,6 @@ const Workspace = () => {
     }, []);
 
     
-    // const handleFileUpload = async (files) => {
-    //     const drive = google.drive({
-    //         version: 'v3',
-    //         auth: accessToken, // Replace with the user's access token
-    //       });
-    // //     try {
-    // //         console.log(files);
-
-    // // const uploadPromises = [];
-
-    // for (let i = 0; i < files.length; i++) {
-    //     try {
-    //         const pdfFile = fileList[i];
-    //         const fileStream = pdfFile.stream; // File stream
-    //         const fileSize = fileStream.size; // File size
-
-    //         // Upload PDF file
-    //         const res = await drive.files.create({
-    //           requestBody: {
-    //             name: pdfFile.name,
-    //             mimeType: 'application/pdf',
-    //             parents: [folderId], // Replace with the folder ID where you want to upload
-    //           },
-    //           media: {
-    //             mimeType: 'application/pdf',
-    //             body: fileStream, // File stream
-    //           },
-    //         }, {
-    //           // Use resumable upload for large files
-    //           requestBody: {
-    //             name: pdfFile.name,
-    //             mimeType: 'application/pdf',
-    //             parents: [folderId], // Replace with the folder ID where you want to upload
-    //           },
-    //           media: {
-    //             mimeType: 'application/pdf',
-    //             body: fileStream, // File stream
-    //           },
-    //         });
-
-    //         console.log('File uploaded:', res.data);
-    //       } catch (error) {
-    //         console.error('Error uploading file:', error);
-    //       }
-    // //   const file = fileList[i];
-
-    // //   const formData = new FormData();
-    // //   formData.append('file', file);
-
-    // //   const response = await axios.post(
-    // //     `https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&parents=${folderId}`,
-    // //     formData,
-    // //     {
-    // //       headers: {
-    // //         'Content-Type': 'application/pdf',
-    // //         Authorization: `Bearer ${accessToken}`,
-    // //       },
-    // //     }
-    // //   );
-
-    // //   console.log('File uploaded:', response.data.name);
-    // //   uploadPromises.push(response);
-    // // }
-
-    // // await Promise.all(uploadPromises);
-    // //       setFileList([]);
-    // //     } catch (error) {
-    // //       console.error('Error uploading files to Drive:', error);
-    //     }
-    //   };
-
 
     const handleFileSelect = async (files) => {
         console.log(files);
@@ -373,7 +302,7 @@ const Workspace = () => {
                             <h3 style={{ color: "white" }}>Bookmarks</h3>
                             {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
                             {toShowBookmarks.map((bookmark, index) => (
-                                <button key={index} onClick={() => handleBookmarkClick(bookmark)} style={{ display: 'block', width: '100%', backgroundColor: 'rgb(126 126 158)', color: '#FFFBEB', height: '5vh' }}>
+                                <button key={index} onClick={() => handleBookmarkClick(bookmark)} style={{ display: 'block',margin:'auto', width: '95%', backgroundColor: 'rgb(54 54 81)', color: 'rgb(255, 251, 235)', height: 'max-content', borderRadius: '25px', minHeight: '5vh' }}>
                                     {bookmark.name} - Page {bookmark.page}
                                 </button>
                             ))}
