@@ -157,13 +157,6 @@ const Workspace = () => {
         console.log(iframeRef.current.src);
     }
 
-
-    useEffect(() => {
-        getFilesFromDrive();
-        createBookmarksFile();
-    }, []);
-
-
     const fileToBytes = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -184,9 +177,6 @@ const Workspace = () => {
     
     const handleFileUpload = async (files) => {
         const url = "https://focusflow-server.onrender.com/upload_pdf_to_drive";
-    
-        // Use Promise.all to wait for all files to be uploaded
-        const uploadPromises = [];
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
@@ -196,7 +186,7 @@ const Workspace = () => {
 
                 console.log(accessToken);
                 console.log(folderId);
-                
+
                 const newURL = `${url}?access_token=${accessToken}&folder_id=${folderId}&file_name=${file.name}`;
     
                 const response = await axios.post(newURL, bytes, {
@@ -211,6 +201,14 @@ const Workspace = () => {
             }
         }
     }
+
+    
+
+    useEffect(() => {
+        getFilesFromDrive();
+        createBookmarksFile();
+    }, []);
+
     
     // const handleFileUpload = async (files) => {
     //     const drive = google.drive({
