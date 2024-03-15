@@ -5,6 +5,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './workspace.css';
 import LogoSvg from "./logosvg";
 
+const folderIdRef = useRef(null);
+const accessTokenRef = useRef(null);
 
 const Workspace = () => {
     const [loading, setLoading] = useState(true);
@@ -16,6 +18,10 @@ const Workspace = () => {
     const folderName = state?.name || null;
     const folderId = state?.id || null;
     const accessToken = state?.accessToken || null;
+
+    folderIdRef.current = state?.id || null;
+    accessTokenRef.current = state?.accessToken || null;
+
 
     const [files, setFiles] = useState([]);
     const iframeRef = useRef();
@@ -184,10 +190,7 @@ const Workspace = () => {
                 const bytes = await fileToBytes(file);
                 console.log('File converted to bytes:', bytes);
 
-                console.log(accessToken);
-                console.log(folderId);
-
-                const newURL = `${url}?access_token=${accessToken}&folder_id=${folderId}&file_name=${file.name}`;
+                const newURL = `${url}?access_token=${accessTokenRef.current}&folder_id=${folderIdRef.current;}&file_name=${file.name}`;
     
                 const response = await axios.post(newURL, bytes, {
                     headers: {
