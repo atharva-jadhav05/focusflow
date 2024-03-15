@@ -33,6 +33,14 @@ const Workspace = () => {
     const [fileList, setFileList] = useState([]);
     const fileInputRef = useRef();
 
+    const [contextMenuPosition, setContextMenuPosition] = useState({ x: 0, y: 0 });
+    const [selectedBookmark, setSelectedBookmark] = useState(null);
+    const [isBContextMenuVisible, setBContextMenuVisible] = useState(false);
+    const [isBConfirmationPopupVisible, setBConfirmationPopupVisible] = useState(false);
+
+    const [selectedPDF, setSelectedPDF] = useState(null);
+    const [isPDFContextMenuVisible, setPDFContextMenuVisible] = useState(false);
+    const [isPDFConfirmationPopupVisible, setPDFConfirmationPopupVisible] = useState(false);
 
     // Load and create links for all files in folder
     const getFilesFromDrive = async () => {
@@ -164,21 +172,21 @@ const Workspace = () => {
     const fileToBytes = (file) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
-    
+
             reader.onload = () => {
                 const arrayBuffer = reader.result;
                 const bytes = new Uint8Array(arrayBuffer);
                 resolve(bytes);
             };
-    
+
             reader.onerror = (error) => {
                 reject(error);
             };
-    
+
             reader.readAsArrayBuffer(file);
         });
     };
-    
+
     const handleFileUpload = async (files) => {
         const url = "https://focusflow-server.onrender.com/upload_pdf_to_drive";
 
@@ -195,13 +203,13 @@ const Workspace = () => {
                 console.log(folder_id);
 
                 const newURL = `${url}?access_token=${accessToken}&folder_id=${folderId}&file_name=${file.name}`;
-    
+
                 const response = await axios.post(newURL, bytes, {
                     headers: {
                         'Content-Type': 'application/octet-stream'
                     }
                 });
-    
+
                 console.log('Response from server:', response.data);
             } catch (error) {
                 console.error('Error uploading PDF to drive:', error);
@@ -212,14 +220,14 @@ const Workspace = () => {
 
     }
 
-    
+
 
     useEffect(() => {
         getFilesFromDrive();
         createBookmarksFile();
     }, []);
 
-    
+
 
     const handleFileSelect = async (files) => {
         console.log(files);
@@ -231,6 +239,69 @@ const Workspace = () => {
         // Programmatically trigger the file input click event
         fileInputRef.current.click();
     };
+
+
+    const handleBookmarkRightClick = (event, bookmark) => {
+        event.preventDefault();
+        setContextMenuPosition({ x: event.clientX, y: event.clientY });
+        setSelectedBookmark(bookmark);
+        setBContextMenuVisible(true);
+    }
+
+    const hideBContextMenu = () => {
+        setBContextMenuVisible(false);
+    };
+
+    const showBConfirmationPopup = () => {
+        setBConfirmationPopupVisible(true);
+        hideBContextMenu();
+    };
+
+    const hideBConfirmationPopup = () => {
+        setBConfirmationPopupVisible(false);
+        setSelectedBookmark(null);
+    };
+
+    const confirmDeleteBookmark = () => {
+        deleteBookmark(selectedBookmark);
+        hideBContextMenu();
+    }
+
+    const deleteBookmark = (bookmark) => {
+        console.log('Deleting bookmark ', bookmark.name);
+    }
+
+    const handlePDFRightClick = (event, file) => {
+        event.preventDefault();
+        setContextMenuPosition({ x: event.clientX, y: event.clientY });
+        setSelectedPDF(file);
+        setPDFContextMenuVisible(true);
+    }
+
+    const hidePDFContextMenu = () => {
+        setPDFContextMenuVisible(false);
+    }
+
+    const showPDFConfirmationPopup = () => {
+        setPDFConfirmationPopupVisible(true);
+        hidePDFContextMenu();
+    }
+
+    const hidePDFConfirmationPopup = () => {
+        setPDFConfirmationPopupVisible(false);
+        setSelectedPDF(null);
+    }
+
+    const confirmDeletePDF = () => {
+        deletePDF(selectedPDF);
+        hidePDFContextMenu();
+    }
+
+    const deletePDF = (file) => {
+        console.log('deleting file ', file.name);
+    }
+
+
 
 
     return (
@@ -285,6 +356,7 @@ const Workspace = () => {
                                         key={file.id}
                                         className={`pdf-button ${activeButton === file.id ? 'active' : ''}`}
                                         onClick={() => displayPDF(file)}
+                                        onContextMenu={(event) => handlePDFRightClick(event, file)}
                                     >
                                         {file.name}
                                     </button>
@@ -308,12 +380,75 @@ const Workspace = () => {
                             <h3 style={{ color: "white" }}>Bookmarks</h3>
                             {/* <!-- PDF buttons for checklist will be dynamically added here --> */}
                             {toShowBookmarks.map((bookmark, index) => (
-                                <button key={index} onClick={() => handleBookmarkClick(bookmark)} style={{ display: 'block',margin:'auto', width: '95%', backgroundColor: 'rgb(54 54 81)', color: 'rgb(255, 251, 235)', height: 'max-content', borderRadius: '25px', minHeight: '5vh' }}>
+                                <button
+                                    key={index}
+                                    onClick={() => handleBookmarkClick(bookmark)}
+                                    onContextMenu={(event) => handleBookmarkRightClick(event, bookmark)}
+                                    style={{ display: 'block', margin: 'auto', width: '95%', backgroundColor: 'rgb(54 54 81)', color: 'rgb(255, 251, 235)', height: 'max-content', borderRadius: '25px', minHeight: '5vh' }}>
                                     {bookmark.name} - Page {bookmark.page}
                                 </button>
                             ))}
                         </div>
                     </div>
+
+                    {isBConfirmationPopupVisible && (
+                        <div className="confirmation-popup">
+                            <label>Are you sure you want to delete this bookmark?</label>
+                            <div className="confirmation-popup-buttons">
+                                <button className="confirm" onClick={confirmDeleteBookmark}>
+                                    Confirm
+                                </button>
+                                <button className="cancel" onClick={hideBConfirmationPopup}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {isBContextMenuVisible && (
+                        <div
+                            className="context-menu"
+                            style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}
+                        >
+                            <div className="context-menu-item delete" onClick={showBConfirmationPopup}>
+                                Delete
+                            </div>
+                            <div className="context-menu-item cancel" onClick={hideBContextMenu}>
+                                Cancel
+                            </div>
+                        </div>
+                    )}
+
+
+                    {isPDFConfirmationPopupVisible && (
+                        <div className="confirmation-popup">
+                            <label>Are you sure you want to delete this PDF File?</label>
+                            <div className="confirmation-popup-buttons">
+                                <button className="confirm" onClick={confirmDeletePDF}>
+                                    Confirm
+                                </button>
+                                <button className="cancel" onClick={hidePDFConfirmationPopup}>
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {isPDFContextMenuVisible && (
+                        <div
+                            className="context-menu"
+                            style={{ left: contextMenuPosition.x, top: contextMenuPosition.y }}
+                        >
+                            <div className="context-menu-item delete" onClick={showPDFConfirmationPopup}>
+                                Delete
+                            </div>
+                            <div className="context-menu-item cancel" onClick={hidePDFContextMenu}>
+                                Cancel
+                            </div>
+                        </div>
+                    )}
+
+
 
                 </div>)}
         </>
