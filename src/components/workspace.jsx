@@ -294,7 +294,7 @@ const Workspace = () => {
     const handleFileSelect = async (files) => {
         console.log(files);
         await setFileList(files);
-        // handleFileUpload(files);
+        handleFileUpload(files);
     };
 
     const handleButtonClick = () => {
