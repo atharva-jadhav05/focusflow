@@ -107,6 +107,7 @@
         max-width: 100%;
         min-height: 480px;
         border-radius: 20px;
+        z-index: 10;
     }
 
     .form-container {
