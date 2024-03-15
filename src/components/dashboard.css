@@ -32,21 +32,21 @@ nav:hover {
 }
 
 nav svg {
-  width: 40px;
-  height: 40px;
+  width: 100px;
+  height: 100px;
   margin-top: 10px;
   fill: white;
 }
 
 nav button {
   padding: 5px;
-  background-color: #525CEB;
+  background-color: #dcdeff;
   color: white;
   border: none;
   cursor: pointer;
   margin: 3px;
   border-radius: 5px;
-  width: 100%;
+  width: 80%;
   height: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -55,13 +55,13 @@ nav button {
 }
 
 nav button.return-btn {
-  background-color: #525CEB;
+  background-color: #dcdeff;
   color: white;
   border: none;
   cursor: pointer;
   margin: 3px;
   border-radius: 5px;
-  width: 100%;
+  width: 80%;
   height: 40px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -128,6 +128,9 @@ nav button.return-btn {
 
 .card {
   border: 1px solid #ddd;
+  background-image: url('https://img.freepik.com/free-photo/book-library-with-open-textbook_1150-5920.jpg');
+  background-size: cover;
+  background-position: center;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba white;
@@ -158,6 +161,7 @@ nav button.return-btn {
   background-color: white;
   padding: 10px;
   text-align: center;
+  font-family: Georgia, 'Times New Roman', Times, serif;
 }
 
 .custom-overlay {
