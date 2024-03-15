@@ -195,9 +195,9 @@ const Workspace = () => {
                 console.log('File converted to bytes:', bytes);
     
                 const params = {
-                    'access_token': accessToken,
-                    'file_name': file.name,
-                    'folder_id': folderId
+                    access_token: accessToken,
+                    file_name: file.name,
+                    folder_id: folderId
                 };
     
                 const response = await axios.post(url, bytes, {
@@ -213,7 +213,7 @@ const Workspace = () => {
             }
         }
     }
-
+    
     // const handleFileUpload = async (files) => {
     //     const drive = google.drive({
     //         version: 'v3',
