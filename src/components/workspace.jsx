@@ -270,9 +270,9 @@ const Workspace = () => {
     const deleteBookmark = async (bookmark) => {
         console.log('Deleting bookmark ', bookmark.name);
 
-        const data = [{fileId: bookmark.fileId, name: bookmark.name, page: bookmark.page}];
+        const data = [{ fileId: bookmark.fileId, name: bookmark.name, page: bookmark.page }];
         console.log(bookmarkFileId);
-        
+
         const url = "https://focusflow-server.onrender.com/delete_bookmarks";
         const params = {
             'access_token': accessToken,
@@ -284,9 +284,12 @@ const Workspace = () => {
                 params: params
             });
             console.log(response.data);
-            
+            setBookmarks(response.data.remaining_bookmarks);
+            setToShowBookmarks(response.data.remaining_bookmarks);
+            hideBContextMenu();
+
         } catch (error) {
-            console.error('Error adding bookmark:', error);
+            console.error('Error deleting bookmark:', error);
         }
 
 
@@ -320,6 +323,27 @@ const Workspace = () => {
 
     const deletePDF = async (file) => {
         try {
+
+            const data = bookmarks.filter(bookmark => bookmark.fileId === file.id);
+
+            const url = "https://focusflow-server.onrender.com/delete_bookmarks";
+            const params = {
+                'access_token': accessToken,
+                'file_id': bookmarkFileId
+            };
+
+            try {
+                const response = await axios.post(url, data, {
+                    params: params
+                });
+                console.log(response.data);
+                setBookmarks(response.data.remaining_bookmarks);
+                setToShowBookmarks(response.data.remaining_bookmarks);
+
+            } catch (error) {
+                console.error('Error deleting bookmarks:', error);
+            }
+
 
             const apiUrl = `https://www.googleapis.com/drive/v3/files/${file.id}`;
 
