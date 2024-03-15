@@ -206,9 +206,9 @@
         opacity: 0;
     }
 
-    .pdf-button.checked {
-        background-color: #007bff;
-        color: white;
+    .pdf-button.active {
+        background-color: #8388dc;
+        color: #09092b;
     }
 
     .pdf-button.checked::after {
