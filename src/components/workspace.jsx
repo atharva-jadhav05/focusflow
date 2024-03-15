@@ -17,6 +17,8 @@ const Workspace = () => {
     const folderId = state?.id || null;
     const accessToken = state?.accessToken || null;
 
+    const [activeButton, setActiveButton] = useState(null);
+
 
     const [files, setFiles] = useState([]);
     const iframeRef = useRef();
@@ -90,6 +92,7 @@ const Workspace = () => {
         if (pdfUrl) {
             iframeRef.current.src = pdfUrl;
             setCurrentFileId(file.id);
+            setActiveButton(file.id);
         } else {
             console.error('Blob link not found for file:', file);
         }
@@ -280,7 +283,7 @@ const Workspace = () => {
                                 {files.map((file) => (
                                     <button
                                         key={file.id}
-                                        className="pdf-button"
+                                        className={`pdf-button ${activeButton === file.id ? 'active' : ''}`}
                                         onClick={() => displayPDF(file)}
                                     >
                                         {file.name}

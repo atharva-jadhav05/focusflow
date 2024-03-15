@@ -40,9 +40,9 @@
 
 
     .navbar {
-        box-shadow: 0 0 50px 15px #48abe0;
-        backdrop-filter: blur(3px);
-        border-bottom: 1px solid #555;
+        box-shadow: 0 0 73px -9px #48abe0;
+        backdrop-filter: blur(10px);
+        /* border-bottom: 1px solid #555; */
         color: white;
         padding: 10px 20px;
         display: flex;
