@@ -165,6 +165,7 @@ const Workspace = () => {
         const file = files.find(file => file.id === bookmark.fileId);
         iframeRef.current.src = `${file.blob_link}#page=${bookmark.page}`;
         setCurrentFileId(file.id);
+        setActiveButton(file.id);
 
         console.log(iframeRef.current.src);
     }
@@ -287,6 +288,7 @@ const Workspace = () => {
             setBookmarks(response.data.remaining_bookmarks);
             setToShowBookmarks(response.data.remaining_bookmarks);
             hideBContextMenu();
+            hideBConfirmationPopup();
 
         } catch (error) {
             console.error('Error deleting bookmark:', error);
