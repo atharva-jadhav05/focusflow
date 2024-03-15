@@ -205,7 +205,7 @@ const Workspace = () => {
             }
         }
 
-        navigate(`/workspace/${folderName}`, { state: { folderName, folderId, accessToken } });
+        window.location.reload();
 
     }
 
