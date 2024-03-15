@@ -204,6 +204,9 @@ const Workspace = () => {
                 console.error('Error uploading PDF to drive:', error);
             }
         }
+
+        navigate(`/workspace/${folderName}`, { state: { folderName, id, accessToken } });
+
     }
 
     
