@@ -326,7 +326,7 @@ const Workspace = () => {
                                 </div>
                             </li>
 
-                            <li><a href="#" id="importButton" onClick={handleButtonClick}>Upload</a>
+                            <li><a id="importButton" onClick={handleButtonClick}>Upload</a>
                                 <input
                                     type="file"
                                     accept=".pdf"
