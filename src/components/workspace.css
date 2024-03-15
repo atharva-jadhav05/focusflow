@@ -29,6 +29,7 @@
     color: white; /* White text */
     font-weight: bold; /* Bold text */
     margin-top: 10px; /* Spacing from the loader */
+    padding-left: 15px;
 }
 
 .workspace {
@@ -39,7 +40,9 @@
 
 
     .navbar {
-        background-color: black;
+        box-shadow: 0 0 50px 15px #48abe0;
+        backdrop-filter: blur(3px);
+        opacity: 50%;
         border-bottom: 1px solid #555;
         color: white;
         padding: 10px 20px;
@@ -48,6 +51,7 @@
         align-items: center;
         position: fixed;
         width: 100%;
+        height: 55px;
         top: 0;
         z-index: 1000;
     }
@@ -62,6 +66,7 @@
         padding: 0;
         margin: 0;
         display: inline-block;
+        font-size: 18px;
     }
 
     .navbar .menu li {
@@ -74,6 +79,12 @@
         text-decoration: none;
     }
 
+    .navbar .menu li:hover {
+        background-color: rgba(255,255,255,0.5);
+        color: #192839;
+        border-radius: 25px;
+    }
+
     .navbar .dropdown {
         position: relative;
     }
@@ -81,7 +92,7 @@
     .navbar .dropdown-content {
         display: none;
         position: absolute;
-        background-color: #333;
+        background-color: #112958;
         min-width: 160px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         z-index: 1;
@@ -89,6 +100,7 @@
         max-height: 200px;
         flex-direction: column;
         padding: 10px;
+        border-radius: 15%;
     }
 
     .navbar .dropdown-content div {
@@ -100,7 +112,7 @@
         margin: 10px;
         padding: 5px;
         border: 1px solid #555;
-        border-radius: 3px;
+        border-radius: 5px;
     }
 
     .navbar .dropdown-content input[type="number"] {
@@ -108,13 +120,13 @@
         margin: 10px;
         padding: 5px;
         border: 1px solid #555;
-        border-radius: 3px;
+        border-radius: 5px;
     }
 
     .navbar .dropdown-content button {
         margin: 0 10px 10px 10px;
         padding: 5px 10px;
-        background-color: #007bff;
+        background-color: #156ecd;
         color: white;
         border: none;
         border-radius: 3px;
@@ -122,7 +134,7 @@
     }
 
     .navbar .dropdown-content button:hover {
-        background-color: #0056b3;
+        background-color: #2e6095;
     }
 
     .navbar .dropdown:hover .dropdown-content {
