@@ -186,7 +186,10 @@ const Workspace = () => {
         const url = "https://focusflow-server.onrender.com/upload_pdf_to_drive";
     
         // Use Promise.all to wait for all files to be uploaded
-        const uploadPromises = files.map(async (file) => {
+        const uploadPromises = [];
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
             try {
                 const bytes = await fileToBytes(file);
                 console.log('File converted to bytes:', bytes);
@@ -208,17 +211,9 @@ const Workspace = () => {
             } catch (error) {
                 console.error('Error uploading PDF to drive:', error);
             }
-        });
-    
-        try {
-            // Wait for all uploads to finish
-            await Promise.all(uploadPromises);
-            console.log('All files uploaded successfully');
-        } catch (error) {
-            console.error('Error uploading files:', error);
         }
-    };
-
+    }
+    
     // const handleFileUpload = async (files) => {
     //     const drive = google.drive({
     //         version: 'v3',
