@@ -9,8 +9,8 @@ import LogoSvg from "./logosvg";
 const LoginPage = () => {
     const navigate = useNavigate();
     const [isSignUpActive, setIsSignUpActive] = useState(false);
-    const [ user, setUser ] = useState();
-    const [ profile, setProfile ] = useState([]);
+    const [user, setUser] = useState();
+    const [profile, setProfile] = useState([]);
 
 
     // For UI Transitions
@@ -37,13 +37,16 @@ const LoginPage = () => {
         () => {
             if (user) {
                 console.log(user);
-                navigate('/dashboard', {state: { user }});
+                navigate('/dashboard', { state: { user } });
             }
         }, [user]);
 
 
     return (
         <div className="login-page">
+            <div class="stars"></div>
+            <div class="stars1"></div>
+            <div class="stars2"></div>
             <div className={`container ${isSignUpActive ? 'right-panel-active' : ''}`}>
                 <div className="form-container sign-up-container">
                     <form action="#">
