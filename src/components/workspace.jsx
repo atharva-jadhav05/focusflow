@@ -267,8 +267,28 @@ const Workspace = () => {
         hideBContextMenu();
     }
 
-    const deleteBookmark = (bookmark) => {
+    const deleteBookmark = async (bookmark) => {
         console.log('Deleting bookmark ', bookmark.name);
+
+        const data = [{fileId: bookmark.fileId, name: bookmark.name, page: bookmark.page}];
+        console.log(bookmarkFileId);
+        
+        const url = "https://focusflow-server.onrender.com/delete_bookmarks";
+        const params = {
+            'access_token': accessToken,
+            'file_id': bookmarkFileId
+        };
+
+        try {
+            const response = await axios.post(url, data, {
+                params: params
+            });
+            console.log(response.data);
+            
+        } catch (error) {
+            console.error('Error adding bookmark:', error);
+        }
+
 
     }
 
