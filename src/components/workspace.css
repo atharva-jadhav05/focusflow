@@ -72,12 +72,12 @@
     .navbar .menu li {
         display: inline-block;
         margin-right: 20px;
+        padding: 2%;
     }
 
     .navbar .menu li a {
         color: white;
         text-decoration: none;
-        padding: 2%;
     }
 
     .navbar .menu li:hover {

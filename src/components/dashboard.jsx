@@ -230,6 +230,17 @@ const Dashboard = () => {
         }
     };
 
+    const logout = useGoogleLogout({
+        onLogoutSuccess: () => {
+            // Perform any additional actions after logout if needed
+            navigate('/');
+            console.log('Logout successful');
+        },
+        onFailure: (error) => {
+            console.error('Logout failed:', error);
+        }
+    });
+
 
 
     /*
