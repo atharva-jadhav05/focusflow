@@ -62,7 +62,6 @@ const Dashboard = () => {
 
     const returnToLoginPage = () => {
         // Add the functionality to return to the login page here
-        user = null;
         navigate('/');
     };
 
