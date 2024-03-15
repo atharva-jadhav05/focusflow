@@ -62,7 +62,8 @@ const Dashboard = () => {
 
     const returnToLoginPage = () => {
         // Add the functionality to return to the login page here
-        alert('Returning to Login Page');
+        // alert('Returning to Login Page');
+        logout();
     };
 
     const showContextMenu = (event, card) => {
