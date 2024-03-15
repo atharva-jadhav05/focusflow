@@ -269,6 +269,7 @@ const Workspace = () => {
 
     const deleteBookmark = (bookmark) => {
         console.log('Deleting bookmark ', bookmark.name);
+
     }
 
     const handlePDFRightClick = (event, file) => {
@@ -297,8 +298,25 @@ const Workspace = () => {
         hidePDFContextMenu();
     }
 
-    const deletePDF = (file) => {
-        console.log('deleting file ', file.name);
+    const deletePDF = async (file) => {
+        try {
+
+            const apiUrl = `https://www.googleapis.com/drive/v3/files/${file.id}`;
+
+            await axios.delete(apiUrl, {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+
+            window.location.reload();
+            console.log('Successfully deleted ', file.name);
+
+        } catch (error) {
+            console.error('Error deleting file:', error);
+            // Handle the error as needed
+        }
+
     }
 
 
