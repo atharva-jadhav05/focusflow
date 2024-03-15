@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from 'react-router-dom';
-import { GoogleLogin, useGoogleLogout } from '@react-oauth/google';
 import axios from 'axios';
 
 import './dashboard.css';
@@ -63,8 +62,9 @@ const Dashboard = () => {
 
     const returnToLoginPage = () => {
         // Add the functionality to return to the login page here
-        // alert('Returning to Login Page');
-        logout();
+        alert('Returning to Login Page');
+        user = null;
+        navigate('/');
     };
 
     const showContextMenu = (event, card) => {
@@ -231,17 +231,6 @@ const Dashboard = () => {
             // Handle the error as needed
         }
     };
-
-    const logout = useGoogleLogout({
-        onLogoutSuccess: () => {
-            // Perform any additional actions after logout if needed
-            navigate('/');
-            console.log('Logout successful');
-        },
-        onFailure: (error) => {
-            console.error('Logout failed:', error);
-        }
-    });
 
 
 
