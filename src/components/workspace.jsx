@@ -285,6 +285,7 @@ const Workspace = () => {
     const handleFileSelect = async (files) => {
         console.log(files);
         await setFileList(files);
+        console.log(accessToken, ' ', folderId);
         handleFileUpload(files);
     };
 
