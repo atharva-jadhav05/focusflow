@@ -13,9 +13,16 @@ const Workspace = () => {
     const location = useLocation();
     const { state } = location;
 
-    const folderName = state?.name || null;
-    const folderId = state?.id || null;
-    const accessToken = state?.accessToken || null;
+    
+    const [folderId, setFolderId] = useState(null);
+    const [accessToken, setAccessToken] = useState(null);
+
+    useEffect(() => {
+
+        setFolderId(state?.id || null);
+        setAccessToken(state?.accessToken || null);
+        
+    }, [state]);
 
 
     const [files, setFiles] = useState([]);
@@ -185,12 +192,6 @@ const Workspace = () => {
                 const bytes = await fileToBytes(file);
                 console.log('File converted to bytes:', bytes);
 
-                const access_token = accessToken;
-                const folder_id = folderId;
-
-                console.log(access_token);
-                console.log(folder_id);
-
                 const newURL = `${url}?access_token=${accessToken}&folder_id=${folderId}&file_name=${file.name}`;
     
                 const response = await axios.post(newURL, bytes, {
@@ -289,7 +290,6 @@ const Workspace = () => {
     const handleFileSelect = async (files) => {
         console.log(files);
         await setFileList(files);
-        console.log(accessToken, ' ', folderId);
         handleFileUpload(files);
     };
 
