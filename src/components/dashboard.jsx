@@ -361,6 +361,11 @@ const Dashboard = () => {
     return (
         <>
             <div className='dash'>
+                <div class="star-field">
+                    <div class="layer"></div>
+                    <div class="layer"></div>
+                    <div class="layer"></div>
+                </div>
                 <nav>
                     <LogoSvg />
                     <button onClick={showCustomBlock} title="Add Card">
