@@ -133,9 +133,6 @@ nav button.return-btn {
 
 .card {
   border: 1px solid #ddd;
-  background-image: url('https://img.freepik.com/free-photo/book-library-with-open-textbook_1150-5920.jpg');
-  background-size: cover;
-  background-position: center;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 8px rgba white;
@@ -153,7 +150,9 @@ nav button.return-btn {
 
 .card .card-img {
   height: 100px;
-  background: linear-gradient(to bottom, #3498db, #2980b9);
+  background-image: url('https://img.freepik.com/free-photo/book-library-with-open-textbook_1150-5920.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 .card img {
